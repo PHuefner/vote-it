@@ -1,0 +1,50 @@
+.content {
+  border-radius: 7px;
+  background-color: #2a292a;
+  padding: 7px;
+  width: 50%;
+  margin: auto;
+  text-align: center;
+}
+
+.title {
+  font-size: 3em;
+  font-weight: bold;
+}
+
+.form {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.textInput {
+  background-color: #313131;
+  border-radius: 7px;
+  border: 1px solid #555555;
+  color: white;
+  padding: 10px;
+  width: 70%;
+  margin: auto;
+  margin-bottom: 5px;
+  text-align: center;
+  font-size: 1.5em;
+}
+
+.button {
+  background-color: #313131;
+  border-radius: 7px;
+  border: 2px solid #555555;
+  color: white;
+  padding: 10px;
+  width: 50%;
+  margin: auto;
+  text-align: center;
+  font-size: 1.5em;
+}
+
+.button:active {
+  background-color: #2a292a;
+  box-shadow: 0px 1px 9px 8px rgba(49, 120, 198, 0.54);
+  transform: scale(0.8);
+}
