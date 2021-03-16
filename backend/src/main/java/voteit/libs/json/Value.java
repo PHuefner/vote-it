@@ -99,6 +99,9 @@ class Value {
         try {
             switch (type) {
                 case STRING:
+                    if(str == null){
+                        throw new NullPointerException();
+                    }
                     return "\"" + str + "\"";
                 case INTEGER:
                     return Integer.toString(integer);
