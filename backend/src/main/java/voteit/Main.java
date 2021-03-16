@@ -50,6 +50,5 @@ public class Main {
 
         VoteitDB.createConnection();
         VoteitDB.createTables();
-        VoteitDB.execCommand("INSERT INTO VoteitTopics(title) VALUES ('first'), ('second');");
     }
 }

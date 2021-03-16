@@ -58,6 +58,54 @@ public class VoteitDB {
         }
     }
 
+    public static ResultSet getUser(int id) {
+        try {
+            PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitUsers WHERE userId=?");
+            ps.setInt(1, id);
+            return ps.executeQuery();
+        } catch (SQLException e) {
+            System.out.println("Couldn't find user in database.");
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static ResultSet getPoll(int id) {
+        try {
+            PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitPolls WHERE pollId=?");
+            ps.setInt(1, id);
+            return ps.executeQuery();
+        } catch (SQLException e) {
+            System.out.println("Couldn't find poll in database.");
+            System.out.println(e.getMessage());
+            return null;
+        }
+	}
+
+	public static void delete(String table, int topicId) {
+        try {
+            PreparedStatement ps;
+            if (table.contains("Topics")) {
+                ps = database.prepareStatement("DELETE FROM "+ table + " WHERE topicId=?");
+            } else if (table.contains("Polls")) {
+                ps = database.prepareStatement("DELETE FROM "+ table + " WHERE pollId=?");
+            } else if (table.contains("Users")) {
+                ps = database.prepareStatement("DELETE FROM "+ table + " WHERE userId=?");
+            } else {
+                System.out.println("Couldn't delete data.");
+                return;
+            }
+
+            ps.setInt(1, topicId);
+            ps.executeQuery();
+            return;
+        } catch (Exception e) {
+            System.out.println("Couldn't delete data.");
+            System.out.println(e.getMessage());
+            return;
+        }
+	}
+
     public static void createConnection() {
         try {
             database = DriverManager.getConnection(url, user, password);
