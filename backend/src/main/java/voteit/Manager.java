@@ -76,4 +76,7 @@ public class Manager {
         VoteitDB.delete("VoteitTopics", topicId);
     }
 
+    public static void addTopic(JsonObject object) {
+        VoteitDB.add("VoteitTopics", object);
+    }
 }

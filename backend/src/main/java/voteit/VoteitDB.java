@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import voteit.libs.json.JsonObject;
+
 public class VoteitDB {
 
     static Connection database;
@@ -27,8 +29,8 @@ public class VoteitDB {
 
             database.createStatement().execute("CREATE TABLE VoteitTopics"
                     + "(topicId SERIAL NOT NULL PRIMARY KEY, title TEXT, votes INT, content TEXT, userId INT, pollId INT,"
-                    + "FOREIGN KEY (userId) REFERENCES VoteitUsers(userId),"
-                    + "FOREIGN KEY (pollId) REFERENCES VoteitPolls(pollId));");
+                    + "FOREIGN KEY (userId) REFERENCES VoteitUsers(userId) ON UPDATE SET NULL,"
+                    + "FOREIGN KEY (pollId) REFERENCES VoteitPolls(pollId) ON UPDATE SET NULL);");
 
         } catch (SQLException e) {
             System.out.println("Couldn't create tables.");
@@ -80,31 +82,60 @@ public class VoteitDB {
             System.out.println(e.getMessage());
             return null;
         }
-	}
+    }
 
-	public static void delete(String table, int topicId) {
+    public static void delete(String table, int id) {
         try {
             PreparedStatement ps;
             if (table.contains("Topics")) {
-                ps = database.prepareStatement("DELETE FROM "+ table + " WHERE topicId=?");
+                ps = database.prepareStatement("DELETE FROM " + table + " WHERE topicId=?");
             } else if (table.contains("Polls")) {
-                ps = database.prepareStatement("DELETE FROM "+ table + " WHERE pollId=?");
+                ps = database.prepareStatement("DELETE FROM " + table + " WHERE pollId=?");
             } else if (table.contains("Users")) {
-                ps = database.prepareStatement("DELETE FROM "+ table + " WHERE userId=?");
+                ps = database.prepareStatement("DELETE FROM " + table + " WHERE userId=?");
             } else {
-                System.out.println("Couldn't delete data.");
+                System.out.println("Couldn't get table.");
                 return;
             }
 
-            ps.setInt(1, topicId);
-            ps.executeQuery();
+            ps.setInt(1, id);
+            ps.executeUpdate();
             return;
         } catch (Exception e) {
             System.out.println("Couldn't delete data.");
             System.out.println(e.getMessage());
             return;
         }
-	}
+    }
+
+    public static void add(String table, JsonObject object) {
+        try {
+            PreparedStatement ps = null;
+            if (table.contains("Topics")) {
+                ps = database.prepareStatement(
+                        "INSERT INTO VoteitTopics(title,votes,content,userId,pollId) VALUES (?,?,?,?,?)");
+                ps.setString(1, object.getString("title"));
+                ps.setInt(2, object.getInteger("votes"));
+                ps.setString(3, object.getString("content"));
+                ps.setInt(4, object.getInteger("userId"));
+                ps.setInt(5, object.getInteger("pollId"));
+            } else if (table.contains("Polls")) {
+
+            } else if (table.contains("Users")) {
+
+            } else {
+                System.out.println("Couldn't get table.");
+                return;
+            }
+
+            ps.executeUpdate();
+            return;
+        } catch (Exception e) {
+            System.out.println("Couldn't insert data.");
+            System.out.println(e.getMessage());
+            return;
+        }
+    }
 
     public static void createConnection() {
         try {

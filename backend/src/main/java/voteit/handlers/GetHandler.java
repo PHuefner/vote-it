@@ -29,7 +29,7 @@ public class GetHandler implements Handler {
                 System.out.println(e.getMessage());
                 return null;
             }
-        } else if (context.route.contains("voting/get")) {
+        } else if (context.route.contains("poll/get")) {
             try {
                 return new Response(Manager.getPollJson(1));
             } catch (SQLException e) {

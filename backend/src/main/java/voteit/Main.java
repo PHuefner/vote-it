@@ -2,18 +2,28 @@ package voteit;
 
 import java.io.IOException;
 
-import voteit.handlers.*;
-import voteit.libs.serverhttp.*;
+import voteit.handlers.GetHandler;
+import voteit.handlers.PollPostHandler;
+import voteit.handlers.TopicPostHandler;
+import voteit.handlers.UserPostHandler;
+import voteit.libs.serverhttp.ServerHttp;
 
 /**
  * Main
  */
 public class Main {
 
-    // docker run -p 5432:5432 -e POSTGRES_PASSWORD=pw -e POSTGRES_USER=voteit postgres
+    // docker run -p 5432:5432 -e POSTGRES_PASSWORD=pw -e POSTGRES_USER=voteit
+    // postgres
     public static void main(String[] args) {
         String routeBase = "/api/";
         ServerHttp server = null;
+
+        GetHandler getHandler = new GetHandler();
+        TopicPostHandler topicPostHandler = new TopicPostHandler();
+        UserPostHandler userPostHandler = new UserPostHandler();
+        PollPostHandler pollPostHandler = new PollPostHandler();
+
         try {
             server = new ServerHttp(3000);
         } catch (IOException e) {
@@ -23,20 +33,20 @@ public class Main {
         }
 
         try {
-            server.addRoute(routeBase + "topics/get", new GetHandler());
-            server.addRoute(routeBase + "topics/edit", new PostHandler());
-            server.addRoute(routeBase + "topics/delete", new PostHandler());
-            server.addRoute(routeBase + "topics/vote", new PostHandler());
-            server.addRoute(routeBase + "topics/submit", new PostHandler());
-            server.addRoute(routeBase + "user/login", new PostHandler());
-            server.addRoute(routeBase + "user/data", new GetHandler());
-            server.addRoute(routeBase + "user/register", new PostHandler());
-            server.addRoute(routeBase + "user/delete", new PostHandler());
-            server.addRoute(routeBase + "user/edit", new PostHandler());
-            server.addRoute(routeBase + "poll/get", new GetHandler());
-            server.addRoute(routeBase + "poll/create", new PostHandler());
-            server.addRoute(routeBase + "poll/delete", new PostHandler());
-            server.addRoute(routeBase + "poll/edit", new PostHandler());
+            server.addRoute(routeBase + "topics/get", getHandler);
+            server.addRoute(routeBase + "topics/edit", topicPostHandler);
+            server.addRoute(routeBase + "topics/delete", topicPostHandler);
+            server.addRoute(routeBase + "topics/vote", topicPostHandler);
+            server.addRoute(routeBase + "topics/submit", topicPostHandler);
+            server.addRoute(routeBase + "user/data", getHandler);
+            server.addRoute(routeBase + "user/login", userPostHandler);
+            server.addRoute(routeBase + "user/register", userPostHandler);
+            server.addRoute(routeBase + "user/delete", userPostHandler);
+            server.addRoute(routeBase + "user/edit", userPostHandler);
+            server.addRoute(routeBase + "poll/get", getHandler);
+            server.addRoute(routeBase + "poll/create", pollPostHandler);
+            server.addRoute(routeBase + "poll/delete", pollPostHandler);
+            server.addRoute(routeBase + "poll/edit", pollPostHandler);
         } catch (Exception e) {
             System.out.println("Couldn't create contexts.");
             System.out.println(e.getMessage());
@@ -51,6 +61,7 @@ public class Main {
 
         VoteitDB.createConnection();
         VoteitDB.createTables();
-        VoteitDB.execCommand("INSERT INTO VoteitTopics(title) VALUES ('Liam'), ('Marcel'), ('Paul');");
+        VoteitDB.execCommand(
+                "INSERT INTO VoteitUsers(name) VALUES ('test'); INSERT INTO VoteitPolls(place) VALUES ('marcels arsch');");
     }
 }
