@@ -28,7 +28,7 @@ public class Manager {
         return topicArray;
     }
 
-	public static JsonArray getUsers() throws SQLException {
+    public static JsonArray getUsers() throws SQLException {
         JsonArray userArray = new JsonArray();
         ResultSet rs = VoteitDB.getTable("VoteitUsers");
         while (rs.next()) {
@@ -39,28 +39,30 @@ public class Manager {
             userObject.put("password", rs.getString("password"));
             userArray.add(userObject);
         }
-		return userArray;
-	}
+        return userArray;
+    }
 
-	public static JsonObject getUserJson(int id) throws SQLException {
-		JsonObject user = new JsonObject();
+    public static JsonObject getUserJson(int id) throws SQLException {
+        JsonObject user = new JsonObject();
         ResultSet rs = VoteitDB.getUser(id);
+        rs.next();
         user.put("userId", rs.getInt("userId"));
         user.put("lastname", rs.getString("lastname"));
         user.put("name", rs.getString("name"));
         user.put("password", rs.getString("password"));
         return user;
-	}
+    }
 
-	public static JsonObject getPollJson(int id) throws SQLException {
+    public static JsonObject getPollJson(int id) throws SQLException {
         JsonObject poll = new JsonObject();
         ResultSet rs = VoteitDB.getPoll(id);
+        rs.next();
         poll.put("pollId", rs.getInt("pollId"));
         poll.put("place", rs.getString("place"));
         poll.put("pollBegin", rs.getDate("pollBegin").toString());
         poll.put("date", rs.getDate("date").toString());
-		return poll;
-	}
+        return poll;
+    }
 
     public static void deleteUser(int userId) {
         VoteitDB.delete("VoteitUsers", userId);
