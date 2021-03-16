@@ -1,5 +1,6 @@
 package voteit.libs.serverhttp;
 
+import voteit.libs.json.JsonArray;
 import voteit.libs.json.JsonObject;
 
 public class Response {
@@ -23,6 +24,12 @@ public class Response {
     public Response(JsonObject jsonResponse) {
         this.status = 200;
         this.response = jsonResponse.toString();
+        this.contentType = "application/json";
+    }
+
+    public Response(JsonArray jsonArray) {
+        this.status = 200;
+        this.response = jsonArray.toString();
         this.contentType = "application/json";
     }
 
