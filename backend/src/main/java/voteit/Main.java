@@ -60,7 +60,7 @@ public class Main {
         }
 
         VoteitDB.createConnection();
-        VoteitDB.createTables();
+        VoteitDB.initTables();
         VoteitDB.execCommand(
                 "INSERT INTO VoteitUsers(name) VALUES ('test'); INSERT INTO VoteitPolls(place) VALUES ('marcels arsch');");
     }

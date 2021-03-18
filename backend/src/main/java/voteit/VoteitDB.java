@@ -17,7 +17,7 @@ public class VoteitDB {
     static String user = "voteit";
     static String password = "pw";
 
-    public static void createTables() {
+    public static void initTables() {
         try {
             database.createStatement().execute("DROP TABLE IF EXISTS VoteitUsers,VoteitPolls,VoteitTopics;");
 
@@ -25,7 +25,7 @@ public class VoteitDB {
                     + "(userId SERIAL NOT NULL PRIMARY KEY, lastname TEXT, name TEXT, password TEXT);");
 
             database.createStatement().execute("CREATE TABLE VoteitPolls"
-                    + "(pollId SERIAL NOT NULL PRIMARY KEY, place TEXT, pollBegin TIMESTAMP, date TIMESTAMP);");
+                    + "(pollId SERIAL NOT NULL PRIMARY KEY, place TEXT, pollBegin TIMESTAMP, date TIMESTAMP, pollEnd TIMESTAMP);");
 
             database.createStatement().execute("CREATE TABLE VoteitTopics"
                     + "(topicId SERIAL NOT NULL PRIMARY KEY, title TEXT, votes INT, content TEXT, userId INT, pollId INT,"
@@ -108,7 +108,7 @@ public class VoteitDB {
         }
     }
 
-    public static void add(String table, JsonObject object) {
+    public static void addData(String table, JsonObject object) {
         try {
             PreparedStatement ps = null;
             if (table.contains("Topics")) {
