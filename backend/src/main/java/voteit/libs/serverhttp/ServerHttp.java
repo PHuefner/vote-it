@@ -142,14 +142,14 @@ class ConnectionHandler implements Runnable {
         // Set method
         METHOD method;
         switch (firstLine[0]) {
-            case "GET":
-                method = METHOD.GET;
-                break;
-            case "POST":
-                method = METHOD.POST;
-                break;
-            default:
-                throw new RequestParsingFailedException("Unsupported Request Method: " + firstLine[0]);
+        case "GET":
+            method = METHOD.GET;
+            break;
+        case "POST":
+            method = METHOD.POST;
+            break;
+        default:
+            throw new RequestParsingFailedException("Unsupported Request Method: " + firstLine[0]);
         }
 
         // Set route
@@ -186,14 +186,14 @@ class ConnectionHandler implements Runnable {
         // Parse post request
         String postData = "";
         if (method == METHOD.POST) {
-            int length = Integer.parseInt(header.get(("Content-Length")));
+            int length = Integer.parseInt(header.get("Content-Length"));
             char[] buffer = new char[length];
             reader.read(buffer, 0, length);
             StringBuilder content = new StringBuilder();
-            for (char c : buffer){
+            for (char c : buffer) {
                 content.append(c);
             }
-            postData= content.toString();
+            postData = content.toString();
         }
 
         // Parse cookies
@@ -203,7 +203,7 @@ class ConnectionHandler implements Runnable {
             cookies = parseCookies(cookieString);
         }
 
-        if(!postData.isEmpty()){
+        if (!postData.isEmpty()) {
             return new Context(method, route, header, cookies, postData);
         } else {
             return new Context(method, route, header, cookies);
@@ -220,24 +220,24 @@ class ConnectionHandler implements Runnable {
 
         for (char c : cookies.toCharArray()) {
             switch (c) {
-                case ' ': // Just skip spaces
-                    break;
-                case '=': // Switch between key and value
-                    onValue = true;
-                    break;
-                case ';': // Save cookie in HashMap and reset
-                    cookiesMap.put(key, value);
-                    onValue = false;
-                    key = "";
-                    value = "";
-                    break;
-                default:
-                    if (!onValue) {
-                        key += c;
-                    } else {
-                        value += c;
-                    }
-                    break;
+            case ' ': // Just skip spaces
+                break;
+            case '=': // Switch between key and value
+                onValue = true;
+                break;
+            case ';': // Save cookie in HashMap and reset
+                cookiesMap.put(key, value);
+                onValue = false;
+                key = "";
+                value = "";
+                break;
+            default:
+                if (!onValue) {
+                    key += c;
+                } else {
+                    value += c;
+                }
+                break;
             }
         }
         cookiesMap.put(key, value); // Last cookie is not (;) terminated
