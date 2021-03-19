@@ -5,8 +5,14 @@ import java.sql.SQLException;
 
 import voteit.libs.json.JsonArray;
 import voteit.libs.json.JsonObject;
-import voteit.resources.Datastructure;
+import voteit.resources.DataStructureFactory;
 
+/**
+ * Manager Class
+ *
+ * Provides methods to interact with the database to create, modify, update and
+ * delete datasets
+ */
 public class Manager {
 
     public static JsonArray getTopics() throws SQLException {

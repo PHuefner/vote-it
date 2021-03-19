@@ -9,7 +9,10 @@ import voteit.handlers.UserPostHandler;
 import voteit.libs.serverhttp.ServerHttp;
 
 /**
- * Main
+ * Main Class
+ *
+ * Initalizes the Database Connection, sets up the routes and handlers and then
+ * starts the server
  */
 public class Main {
 

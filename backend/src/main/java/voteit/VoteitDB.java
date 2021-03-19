@@ -8,6 +8,12 @@ import java.sql.SQLException;
 
 import voteit.libs.json.JsonObject;
 
+/**
+ * VoteidDB Class
+ *
+ * Abstraction for SQL queries. Allows interaction with the database without
+ * having to write sql queries
+ */
 public class VoteitDB {
 
     static Connection database;
