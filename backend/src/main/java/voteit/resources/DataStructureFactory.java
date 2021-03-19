@@ -5,7 +5,13 @@ import java.sql.SQLException;
 
 import voteit.libs.json.JsonObject;
 
-public class Datastructure {
+/**
+ * DataStructureFactory Class
+ *
+ * Factory for common project datastructures. Takes a SQL ResultSet as input and
+ * outputs JsonObjects
+ */
+public class DataStructureFactory {
 
     public static JsonObject buildUser(ResultSet rs) throws SQLException {
         JsonObject user = new JsonObject();

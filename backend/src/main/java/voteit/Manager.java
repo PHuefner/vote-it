@@ -13,7 +13,7 @@ public class Manager {
         JsonArray topicArray = new JsonArray();
         ResultSet rs = VoteitDB.getTable("VoteitTopics");
         while (rs.next()) {
-            topicArray.add(Datastructure.buildTopic(rs));
+            topicArray.add(DataStructureFactory.buildTopic(rs));
         }
         return topicArray;
     }
@@ -22,7 +22,7 @@ public class Manager {
         JsonArray userArray = new JsonArray();
         ResultSet rs = VoteitDB.getTable("VoteitUsers");
         while (rs.next()) {
-            userArray.add(Datastructure.buildUser(rs));
+            userArray.add(DataStructureFactory.buildUser(rs));
         }
         return userArray;
     }
@@ -30,13 +30,13 @@ public class Manager {
     public static JsonObject getUserJson(int id) throws SQLException {
         ResultSet rs = VoteitDB.getUser(id);
         rs.next();
-        return Datastructure.buildUser(rs);
+        return DataStructureFactory.buildUser(rs);
     }
 
     public static JsonObject getPollJson(int id) throws SQLException {
         ResultSet rs = VoteitDB.getPoll(id);
         rs.next();
-        return Datastructure.buildPoll(rs);
+        return DataStructureFactory.buildPoll(rs);
     }
 
     public static void deleteUser(int userId) {
