@@ -112,7 +112,6 @@ class ConnectionHandler implements Runnable {
 
         // Handle request
         try {
-            // TODO support post requests
             Context context = parseRequest();
             Response response = server.getRoute(context.route).handle(context);
             writer.print(response.build());
