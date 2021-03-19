@@ -24,6 +24,11 @@ public class Main {
         UserPostHandler userPostHandler = new UserPostHandler();
         PollPostHandler pollPostHandler = new PollPostHandler();
 
+        VoteitDB.createConnection();
+        VoteitDB.initTables();
+        VoteitDB.execCommand(
+                "INSERT INTO VoteitUsers(name) VALUES ('test'); INSERT INTO VoteitPolls(place) VALUES ('marcels arsch');");
+
         try {
             server = new ServerHttp(3000);
         } catch (IOException e) {
@@ -59,9 +64,5 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
-        VoteitDB.createConnection();
-        VoteitDB.initTables();
-        VoteitDB.execCommand(
-                "INSERT INTO VoteitUsers(name) VALUES ('test'); INSERT INTO VoteitPolls(place) VALUES ('marcels arsch');");
     }
 }
