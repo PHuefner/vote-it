@@ -1,6 +1,7 @@
 package voteit;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import voteit.handlers.GetHandler;
 import voteit.handlers.PollPostHandler;
@@ -21,6 +22,7 @@ public class Main {
     public static void main(String[] args) {
         String routeBase = "/api/";
         ServerHttp server = null;
+        // TODO set negative Response status
 
         GetHandler getHandler = new GetHandler();
         TopicPostHandler topicPostHandler = new TopicPostHandler();
@@ -49,6 +51,7 @@ public class Main {
             server.addRoute(routeBase + "user/register", userPostHandler);
             server.addRoute(routeBase + "user/delete", userPostHandler);
             server.addRoute(routeBase + "user/edit", userPostHandler);
+            server.addRoute(routeBase + "user/login", userPostHandler);
             server.addRoute(routeBase + "poll/get", getHandler);
             server.addRoute(routeBase + "poll/create", pollPostHandler);
             server.addRoute(routeBase + "poll/delete", pollPostHandler);

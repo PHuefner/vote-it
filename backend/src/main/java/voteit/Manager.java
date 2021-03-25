@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import voteit.libs.json.JsonArray;
 import voteit.libs.json.JsonObject;
+import voteit.modules.LoginNotFoundException;
 import voteit.resources.DataStructureFactory;
 
 /**
@@ -63,5 +64,24 @@ public class Manager {
 
     public static void updateTopic(JsonObject object) {
         VoteitDB.updateData("VoteitTopics", object);
+    }
+
+    public static int loginUser(String name, String password) throws LoginNotFoundException, SQLException {
+        boolean done = false;
+        int token = 0;
+        ResultSet rs = VoteitDB.getUser(name, password);
+        if (rs.next()) {
+            while (!done) {
+                token = (int) Math.floor(Math.random() * 1000000000 + 1);
+                try {
+                    VoteitDB.execCommand(
+                            "INSERT INTO UserTokens(token, userId) VALUES (" + token + "," + rs.getInt("userId") + ")");
+                    done = true;
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+        return token;
     }
 }

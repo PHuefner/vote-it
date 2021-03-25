@@ -42,6 +42,7 @@ public class Response {
         StringBuilder out = new StringBuilder();
         out.append("HTTP/1.0 " + status + "\n");
         out.append("Content-Type: " + contentType + "; charset=UTF-8" + "\n");
+        out.append("Access-Control-Allow-Origin: *\n");
         if (!headers.isEmpty()) {
             headers.forEach((k, v) -> {
                 out.append(String.format("Set-Cookie: %s=%s;\n", k, v));

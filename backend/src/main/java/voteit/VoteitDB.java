@@ -25,7 +25,7 @@ public class VoteitDB {
 
     public static void initTables() {
         try {
-            database.createStatement().execute("DROP TABLE IF EXISTS VoteitUsers,VoteitPolls,VoteitTopics;");
+            database.createStatement().execute("DROP TABLE IF EXISTS VoteitUsers,VoteitPolls,VoteitTopics,UserTokens;");
 
             database.createStatement().execute("CREATE TABLE VoteitUsers"
                     + "(userId SERIAL NOT NULL PRIMARY KEY, lastname TEXT, name TEXT, password TEXT);");
@@ -38,6 +38,8 @@ public class VoteitDB {
                     + "FOREIGN KEY (userId) REFERENCES VoteitUsers(userId) ON UPDATE SET NULL,"
                     + "FOREIGN KEY (pollId) REFERENCES VoteitPolls(pollId) ON UPDATE SET NULL);");
 
+            database.createStatement().execute("CREATE TABLE UserTokens(token INT PRIMARY KEY, userId INT,"
+                    + "FOREIGN KEY (userId) REFERENCES VoteitUsers(userId) ON DELETE CASCADE)");
         } catch (SQLException e) {
             System.out.println("Couldn't create tables.");
             System.out.println(e.getMessage());
@@ -70,6 +72,19 @@ public class VoteitDB {
         try {
             PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitUsers WHERE userId=?");
             ps.setInt(1, id);
+            return ps.executeQuery();
+        } catch (SQLException e) {
+            System.out.println("Couldn't find user in database.");
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static ResultSet getUser(String name, String password) {
+        try {
+            PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitUsers WHERE name=? AND password=?");
+            ps.setString(1, name);
+            ps.setString(2, password);
             return ps.executeQuery();
         } catch (SQLException e) {
             System.out.println("Couldn't find user in database.");
@@ -148,7 +163,7 @@ public class VoteitDB {
             PreparedStatement ps = null;
             if (table.contains("Topics")) {
                 ps = database.prepareStatement(
-                        "ALTER TABLE VoteitTopics SET title = ?, votes = ?, content = ?, userId = ?, pollId = ? WHERE topicId = ?");
+                        "UPDATE TABLE VoteitTopics SET title = ?, votes = ?, content = ?, userId = ?, pollId = ? WHERE topicId = ?");
                 ps.setString(1, object.getString("title"));
                 ps.setInt(2, object.getInteger("votes"));
                 ps.setString(3, object.getString("content"));

@@ -25,7 +25,7 @@ public class TopicPostHandler implements Handler {
                 System.out.println(e.getMessage());
                 return new Response("An error occured. Please try again.");
             } catch (UnsupportedTypeException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
                 return new Response("An error occured. Please try again.");
             }
 
