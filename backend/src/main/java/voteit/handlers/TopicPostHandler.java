@@ -17,6 +17,23 @@ public class TopicPostHandler implements Handler {
         JsonParser parser = new JsonParser();
 
         if (context.route.contains("edit")) {
+            JsonObject object = null;
+            try {
+                object = parser.buildObject(context.requestData);
+            } catch (JsonFormattingException e) {
+                System.out.println("Couldn't format JsonString.");
+                System.out.println(e.getMessage());
+                return new Response("An error occured. Please try again.");
+            } catch (UnsupportedTypeException e) {
+                e.printStackTrace();
+                return new Response("An error occured. Please try again.");
+            }
+
+            Manager.updateTopic(object);
+
+            Response res = new Response("");
+            res.setStatus(200);
+            return res;
 
         } else if (context.route.contains("delete")) {
             JsonObject object = null;
@@ -25,10 +42,10 @@ public class TopicPostHandler implements Handler {
             } catch (JsonFormattingException e) {
                 System.out.println("Couldn't format JsonString.");
                 System.out.println(e.getMessage());
-                return null;
+                return new Response("An error occured. Please try again.");
             } catch (UnsupportedTypeException e) {
-                e.printStackTrace();
-                return null;
+                System.out.println(e.getMessage());
+                return new Response("An error occured. Please try again.");
             }
 
             try {
@@ -36,14 +53,16 @@ public class TopicPostHandler implements Handler {
             } catch (NullPointerException | KeyNotFoundException | WrongTypeException e) {
                 System.out.println("Couldn't delete topic.");
                 System.out.println(e.getMessage());
-                return null;
+                return new Response("An error occured. Please try again.");
             }
 
             Response res = new Response("");
             res.setStatus(200);
             return res;
+
         } else if (context.route.contains("vote")) {
             return null;
+
         } else if (context.route.contains("submit")) {
             JsonObject object = null;
             try {
@@ -51,10 +70,10 @@ public class TopicPostHandler implements Handler {
             } catch (JsonFormattingException e) {
                 System.out.println("Couldn't format JsonString.");
                 System.out.println(e.getMessage());
-                return null;
+                return new Response("An error occured. Please try again.");
             } catch (UnsupportedTypeException e) {
                 e.printStackTrace();
-                return null;
+                return new Response("An error occured. Please try again.");
             }
 
             Manager.addTopic(object);
@@ -62,10 +81,10 @@ public class TopicPostHandler implements Handler {
             Response res = new Response("");
             res.setStatus(200);
             return res;
+
         } else {
-            return null;
+            return new Response("Wrong url path.");
         }
-        return null;
     }
 
 }

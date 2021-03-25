@@ -60,4 +60,8 @@ public class Manager {
     public static void addTopic(JsonObject object) {
         VoteitDB.addData("VoteitTopics", object);
     }
+
+    public static void updateTopic(JsonObject object) {
+        VoteitDB.updateData("VoteitTopics", object);
+    }
 }

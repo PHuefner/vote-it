@@ -126,11 +126,11 @@ public class VoteitDB {
                 ps.setInt(4, object.getInteger("userId"));
                 ps.setInt(5, object.getInteger("pollId"));
             } else if (table.contains("Polls")) {
-
+                // TODO finish method
             } else if (table.contains("Users")) {
 
             } else {
-                System.out.println("Couldn't get table.");
+                System.out.println("Couldn't find table.");
                 return;
             }
 
@@ -138,6 +138,34 @@ public class VoteitDB {
             return;
         } catch (Exception e) {
             System.out.println("Couldn't insert data.");
+            System.out.println(e.getMessage());
+            return;
+        }
+    }
+
+    public static void updateData(String table, JsonObject object) {
+        try {
+            PreparedStatement ps = null;
+            if (table.contains("Topics")) {
+                ps = database.prepareStatement(
+                        "ALTER TABLE VoteitTopics SET title = ?, votes = ?, content = ?, userId = ?, pollId = ? WHERE topicId = ?");
+                ps.setString(1, object.getString("title"));
+                ps.setInt(2, object.getInteger("votes"));
+                ps.setString(3, object.getString("content"));
+                ps.setInt(4, object.getInteger("userId"));
+                ps.setInt(5, object.getInteger("pollId"));
+            } else if (table.contains("Polls")) {
+                // TODO finish method
+            } else if (table.contains("Users")) {
+
+            } else {
+                System.out.println("Couldn't find table.");
+            }
+
+            ps.executeUpdate();
+            return;
+        } catch (Exception e) {
+            System.out.println("Couldn't change data.");
             System.out.println(e.getMessage());
             return;
         }

@@ -29,8 +29,6 @@ public class Main {
 
         VoteitDB.createConnection();
         VoteitDB.initTables();
-        VoteitDB.execCommand(
-                "INSERT INTO VoteitUsers(name) VALUES ('test'); INSERT INTO VoteitPolls(place) VALUES ('marcels arsch');");
 
         try {
             server = new ServerHttp(3000);
