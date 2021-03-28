@@ -3,9 +3,8 @@ import { createTopic, TopicData } from "components/topicList";
 import { store } from "store/store";
 
 export const fetchTopic = createAsyncThunk("topics/fetchTopic", async () => {
-  console.log("boi");
   const response = await (
-    await fetch("http://77.179.142.208:3000/api/topic")
+    await fetch("http://localhost:3001/api/topics/get")
   ).json();
   console.log(response);
   let topics: TopicData[] = [];

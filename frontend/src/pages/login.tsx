@@ -13,7 +13,7 @@ export default function Login() {
 
   const handleSubmit = function (e: FormEvent) {
     e.preventDefault();
-    dispatch(logIn({ username: username, password: password }));
+    dispatch(logIn({ user: username, password: password }));
     console.log("boi");
     router.push("/");
   };

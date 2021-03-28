@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface logInPayload {
-  username: string;
+  user: string;
   password: string;
 }
 
@@ -13,8 +13,7 @@ export const user = createSlice({
   },
   reducers: {
     logIn: (state, action: PayloadAction<logInPayload>) => {
-      state.loggedIn = true;
-      state.name = action.payload.username;
+      fetch("http://localhost:3001/api/user/login",{method:"POST",body:JSON.stringify({user:action.payload.user, password: action.payload.password})});
     },
     logOut: (state) => {
       state.loggedIn = false;
