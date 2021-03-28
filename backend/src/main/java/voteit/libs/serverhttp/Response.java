@@ -30,12 +30,14 @@ public class Response {
         this.contentType = "application/json";
     }
 
-    public void setStatus(int status) {
+    public Response setStatus(int status) {
         this.status = status;
+        return this;
     }
 
-    public void addCookie(String key, String value) {
+    public Response addCookie(String key, String value) {
         headers.put(key, value);
+        return this;
     }
 
     public String build() {
