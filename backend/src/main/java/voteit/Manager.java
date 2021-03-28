@@ -81,6 +81,8 @@ public class Manager {
                     System.out.println(e.getMessage());
                 }
             }
+        } else {
+            throw new LoginNotFoundException("Wrong username or password");
         }
         return token;
     }

@@ -38,15 +38,16 @@ public class UserPostHandler implements Handler {
 
             try {
                 int token = Manager.loginUser(object.getString("user"), object.getString("password"));
-                Response res = new Response("");
+                Response res = new Response("Logged in");
                 res.setStatus(200);
                 res.addCookie(Constants.LOGINTOKENCOOKIEKEY, String.valueOf(token));
                 return res;
-            } catch (KeyNotFoundException | WrongTypeException | SQLException | NullPointerException
-                    | LoginNotFoundException e) {
+            } catch (KeyNotFoundException | WrongTypeException | SQLException | NullPointerException e) {
                 System.out.println("Couldn't login user.");
                 System.out.println(e.getMessage());
                 return new Response("An error occured. Please try again.");
+            } catch (LoginNotFoundException e) {
+                return new Response("Wrong username or password");
             } // TODO Nullpointer message not found
         }
 
