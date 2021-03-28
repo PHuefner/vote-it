@@ -25,15 +25,13 @@ public class UserPostHandler implements Handler {
 
         if (context.route.contains("login")) {
             JsonObject object = null;
+
             try {
                 object = parser.buildObject(context.requestData);
-            } catch (JsonFormattingException e) {
-                System.out.println("Couldn't format JsonString.");
+            } catch (UnsupportedTypeException | JsonFormattingException e) {
+                System.out.println("Json Error:");
                 System.out.println(e.getMessage());
-                return new Response("An error occured. Please try again.");
-            } catch (UnsupportedTypeException e) {
-                System.out.println(e.getMessage());
-                return new Response("An error occured. Please try again.");
+                return Constants.genericJsonError(e);
             }
 
             try {
@@ -42,16 +40,20 @@ public class UserPostHandler implements Handler {
                 res.setStatus(200);
                 res.addCookie(Constants.LOGINTOKENCOOKIEKEY, String.valueOf(token));
                 return res;
-            } catch (KeyNotFoundException | WrongTypeException | SQLException | NullPointerException e) {
+            } catch (SQLException | NullPointerException e) {
                 System.out.println("Couldn't login user.");
                 System.out.println(e.getMessage());
-                return new Response("An error occured. Please try again.");
+                return Constants.genericServerError();
+            } catch (KeyNotFoundException | WrongTypeException e) {
+                System.out.println("Login failed on json");
+                System.out.println(e.getMessage());
+                return Constants.genericJsonError(e);
             } catch (LoginNotFoundException e) {
-                return new Response("Wrong username or password");
+                return new Response("Wrong username or password").setStatus(401);
             } // TODO Nullpointer message not found
         }
 
-        return null;
+        return Constants.genericNotFound();
     }
 
 }

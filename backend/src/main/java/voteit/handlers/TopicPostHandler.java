@@ -8,6 +8,7 @@ import voteit.libs.json.KeyNotFoundException;
 import voteit.libs.json.UnsupportedTypeException;
 import voteit.libs.json.WrongTypeException;
 import voteit.libs.serverhttp.*;
+import voteit.modules.Constants;
 
 public class TopicPostHandler implements Handler {
 
@@ -20,70 +21,57 @@ public class TopicPostHandler implements Handler {
             JsonObject object = null;
             try {
                 object = parser.buildObject(context.requestData);
-            } catch (JsonFormattingException e) {
-                System.out.println("Couldn't format JsonString.");
+            } catch (UnsupportedTypeException | JsonFormattingException e) {
+                System.out.println("Json error on edit topic");
                 System.out.println(e.getMessage());
-                return new Response("An error occured. Please try again.");
-            } catch (UnsupportedTypeException e) {
-                System.out.println(e.getMessage());
-                return new Response("An error occured. Please try again.");
+                return Constants.genericJsonError(e);
             }
 
             Manager.updateTopic(object);
 
-            Response res = new Response("");
-            res.setStatus(200);
-            return res;
+            return new Response("Topic updated");
 
         } else if (context.route.contains("delete")) {
             JsonObject object = null;
             try {
                 object = parser.buildObject(context.requestData);
-            } catch (JsonFormattingException e) {
-                System.out.println("Couldn't format JsonString.");
+            } catch (UnsupportedTypeException | JsonFormattingException e) {
+                System.out.println("Json error on edit topic");
                 System.out.println(e.getMessage());
-                return new Response("An error occured. Please try again.");
-            } catch (UnsupportedTypeException e) {
-                System.out.println(e.getMessage());
-                return new Response("An error occured. Please try again.");
+                return Constants.genericJsonError(e);
             }
 
             try {
                 Manager.deleteTopic(object.getInteger("topicId"));
-            } catch (NullPointerException | KeyNotFoundException | WrongTypeException e) {
+            } catch (NullPointerException e) {
                 System.out.println("Couldn't delete topic.");
                 System.out.println(e.getMessage());
                 return new Response("An error occured. Please try again.");
+            } catch (KeyNotFoundException | WrongTypeException e) {
+                System.out.println("Json error on edit topic");
+                System.out.println(e.getMessage());
+                return Constants.genericJsonError(e);
             }
 
-            Response res = new Response("");
-            res.setStatus(200);
-            return res;
+            return new Response("Topic deleted");
 
         } else if (context.route.contains("vote")) {
-            return null;
-
+            return Constants.genericNotImplemented();
         } else if (context.route.contains("submit")) {
             JsonObject object = null;
             try {
                 object = parser.buildObject(context.requestData);
-            } catch (JsonFormattingException e) {
-                System.out.println("Couldn't format JsonString.");
+            } catch (UnsupportedTypeException | JsonFormattingException e) {
+                System.out.println("Json error on submit topic");
                 System.out.println(e.getMessage());
-                return new Response("An error occured. Please try again.");
-            } catch (UnsupportedTypeException e) {
-                e.printStackTrace();
-                return new Response("An error occured. Please try again.");
+                return Constants.genericJsonError(e);
             }
 
             Manager.addTopic(object);
 
-            Response res = new Response("");
-            res.setStatus(200);
-            return res;
-
+            return new Response("Topic submitted");
         } else {
-            return new Response("Wrong url path.");
+            return Constants.genericNotFound();
         }
     }
 

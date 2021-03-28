@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import voteit.Manager;
 import voteit.libs.serverhttp.*;
+import voteit.modules.Constants;
 
 /**
  * MyHttpHandler
@@ -19,7 +20,7 @@ public class GetHandler implements Handler {
             } catch (SQLException e) {
                 System.out.println("Couldn't create a TopicArray.");
                 System.out.println(e.getMessage());
-                return null;
+                return Constants.genericServerError();
             }
         } else if (context.route.contains("user/data")) {
             String id = context.cookies.get("userId");
@@ -28,7 +29,7 @@ public class GetHandler implements Handler {
             } catch (SQLException e) {
                 System.out.println("Couldn't create UserObject.");
                 System.out.println(e.getMessage());
-                return null;
+                return Constants.genericServerError();
             }
         } else if (context.route.contains("poll/get")) {
             String id = context.cookies.get("pollId");
@@ -37,11 +38,11 @@ public class GetHandler implements Handler {
             } catch (SQLException e) {
                 System.out.println("Couldn't create PollObject");
                 System.out.println(e.getMessage());
-                return null;
+                return Constants.genericServerError();
             }
         } else {
             System.out.println("Invalid url for this handler.");
-            return null;
+            return Constants.genericNotFound();
         }
     }
 

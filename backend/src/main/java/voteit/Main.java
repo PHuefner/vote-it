@@ -33,7 +33,7 @@ public class Main {
         VoteitDB.initTables();
 
         try {
-            server = new ServerHttp(3000);
+            server = new ServerHttp(3001);
         } catch (IOException e) {
             System.out.println("Couldn't create HttpServer.");
             System.out.println(e.getMessage());
