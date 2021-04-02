@@ -7,7 +7,10 @@ import voteit.handlers.GetHandler;
 import voteit.handlers.PollPostHandler;
 import voteit.handlers.TopicPostHandler;
 import voteit.handlers.UserPostHandler;
+import voteit.libs.serverhttp.Context;
+import voteit.libs.serverhttp.Handler;
 import voteit.libs.serverhttp.ServerHttp;
+import voteit.modules.Constants;
 
 /**
  * Main Class
@@ -28,6 +31,9 @@ public class Main {
         TopicPostHandler topicPostHandler = new TopicPostHandler();
         UserPostHandler userPostHandler = new UserPostHandler();
         PollPostHandler pollPostHandler = new PollPostHandler();
+        Handler notFoundHandler = (Context context) -> {
+            return Constants.genericNotFound();
+        };
 
         VoteitDB.createConnection();
         VoteitDB.initTables();
@@ -56,6 +62,7 @@ public class Main {
             server.addRoute(routeBase + "poll/create", pollPostHandler);
             server.addRoute(routeBase + "poll/delete", pollPostHandler);
             server.addRoute(routeBase + "poll/edit", pollPostHandler);
+            server.setNotFoundHandler(notFoundHandler);
         } catch (Exception e) {
             System.out.println("Couldn't create contexts.");
             System.out.println(e.getMessage());

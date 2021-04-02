@@ -17,6 +17,7 @@ import java.util.HashMap;
 public class ServerHttp {
 
     private HashMap<String, Handler> routeMap;
+    private Handler notFoundHandler;
     private Thread mainThread;
 
     public ServerHttp(int port) throws IOException {
@@ -29,6 +30,14 @@ public class ServerHttp {
 
     public void addRoute(String route, Handler handler) {
         routeMap.put(route, handler);
+    }
+
+    public void setNotFoundHandler(Handler notFoundHandler) {
+        this.notFoundHandler = notFoundHandler;
+    }
+
+    public Handler getNotFoundHandler() {
+        return this.notFoundHandler;
     }
 
     public void start() throws Exception {
@@ -113,7 +122,13 @@ class ConnectionHandler implements Runnable {
         // Handle request
         try {
             Context context = parseRequest();
-            Response response = server.getRoute(context.route).handle(context);
+            Response response;
+            try {
+                response = server.getRoute(context.route).handle(context);
+            } catch (RouteNotConfiguredException e) {
+                System.out.println("Route not configured: " + e.getMessage());
+                response = server.getNotFoundHandler().handle(context);
+            }
             writer.print(response.build());
             writer.flush();
 
@@ -122,8 +137,6 @@ class ConnectionHandler implements Runnable {
         } catch (IOException e2) {
             e2.printStackTrace();
             System.out.println("Request parsing failed on IO: " + e2.getMessage());
-        } catch (RouteNotConfiguredException e3) {
-            System.out.println("Route not configured: " + e3.getMessage());
         }
 
         // Close socket
