@@ -63,109 +63,109 @@ public class JsonParser {
         while (state != STATE.FINISH) {
             switch (c) {
 
-                // Cases: Ignore
-                case ' ': // Just ignore spaces outside of values
-                    next();
-                    break;
-                case '\n': // Just ignore newlines outside of values
-                    next();
-                    break;
+            // Cases: Ignore
+            case ' ': // Just ignore spaces outside of values
+                next();
+                break;
+            case '\n': // Just ignore newlines outside of values
+                next();
+                break;
 
-                // Cases: Syntax
+            // Cases: Syntax
 
-                /**
-                 * Symbols:
-                 *
-                 * ({): Start object or inner object
-                 *
-                 * (:): Switch from attribute name to value
-                 *
-                 * (,): End attribute
-                 *
-                 * (}): End object
-                 */
+            /**
+             * Symbols:
+             *
+             * ({): Start object or inner object
+             *
+             * (:): Switch from attribute name to value
+             *
+             * (,): End attribute
+             *
+             * (}): End object
+             */
 
-                // Start parser or parse inner object
-                case '{':
-                    if (state == STATE.START) { // Start parser
-                        state = STATE.NEXTATTRIBUTE;
-                    } else if (state == STATE.VALUE) { // Parse inner object
-                        value = parseValue();
-                        map.put(attribute, value);
-                        state = STATE.ATTRIBUTEDONE;
-
-                        // Reset in case of error;
-                        attribute = "";
-                        value = null;
-
-                        break;
-
-                    } else { // { at unexpected place
-                        throw new JsonFormattingException("Started new Object at unsupported place");
-                    }
-
-                    next();
-                    break;
-
-                // Switch from attribute to value
-                case ':':
-                    if (state != STATE.BETWEEN) { // Error if (:) at unexpected place
-                        throw new JsonFormattingException("Pair symbol (:) at wrong place");
-                    }
-
-                    state = STATE.VALUE;
-                    next();
-                    break;
-
-                // Continue if , after value
-                case ',':
-                    if (state != STATE.ATTRIBUTEDONE) { // Error if (,) at unexpected place
-                        throw new JsonFormattingException("Starting new attribute (,) at wrong place");
-                    }
-
+            // Start parser or parse inner object
+            case '{':
+                if (state == STATE.START) { // Start parser
                     state = STATE.NEXTATTRIBUTE;
+                } else if (state == STATE.VALUE) { // Parse inner object
+                    value = parseValue();
+                    map.put(attribute, value);
+                    state = STATE.ATTRIBUTEDONE;
+
+                    // Reset in case of error;
+                    attribute = "";
+                    value = null;
+
+                    break;
+
+                } else { // { at unexpected place
+                    throw new JsonFormattingException("Started new Object at unsupported place");
+                }
+
+                next();
+                break;
+
+            // Switch from attribute to value
+            case ':':
+                if (state != STATE.BETWEEN) { // Error if (:) at unexpected place
+                    throw new JsonFormattingException("Pair symbol (:) at wrong place");
+                }
+
+                state = STATE.VALUE;
+                next();
+                break;
+
+            // Continue if , after value
+            case ',':
+                if (state != STATE.ATTRIBUTEDONE) { // Error if (,) at unexpected place
+                    throw new JsonFormattingException("Starting new attribute (,) at wrong place");
+                }
+
+                state = STATE.NEXTATTRIBUTE;
+                next();
+                break;
+
+            // Stop parser
+            case '}':
+                if (state != STATE.NEXTATTRIBUTE && state != STATE.ATTRIBUTEDONE) { // Error if (}) at unexpected
+                                                                                    // place.
+                    // Doesnt error on trailing comma.
+                    throw new JsonFormattingException("Object ended before attribute is done");
+                }
+                if (iter.hasNext()) { // Inner object
                     next();
+                }
+                state = STATE.FINISH;
+                break;
+
+            // Cases: Parsing
+            default:
+                switch (state) {
+
+                // Parse attribute
+                case NEXTATTRIBUTE:
+                    state = STATE.ATTRIBUTE;
+                    attribute = parseAttribute();
+                    state = STATE.BETWEEN;
                     break;
 
-                // Stop parser
-                case '}':
-                    if (state != STATE.NEXTATTRIBUTE && state != STATE.ATTRIBUTEDONE) { // Error if (}) at unexpected
-                                                                                        // place.
-                        // Doesnt error on trailing comma.
-                        throw new JsonFormattingException("Object ended before attribute is done");
-                    }
-                    if (iter.hasNext()) { // Inner object
-                        next();
-                    }
-                    state = STATE.FINISH;
+                // Parse value
+                case VALUE:
+                    value = parseValue();
+                    map.put(attribute, value);
+                    state = STATE.ATTRIBUTEDONE;
+
+                    // Reset in case of error;
+                    attribute = "";
+                    value = null;
+
                     break;
 
-                // Cases: Parsing
-                default:
-                    switch (state) {
-
-                        // Parse attribute
-                        case NEXTATTRIBUTE:
-                            state = STATE.ATTRIBUTE;
-                            attribute = parseAttribute();
-                            state = STATE.BETWEEN;
-                            break;
-
-                        // Parse value
-                        case VALUE:
-                            value = parseValue();
-                            map.put(attribute, value);
-                            state = STATE.ATTRIBUTEDONE;
-
-                            // Reset in case of error;
-                            attribute = "";
-                            value = null;
-
-                            break;
-
-                        default: // Fallthrough case - throw error
-                            throw new JsonFormattingException("Unexpected symbol: " + c);
-                    }
+                default: // Fallthrough case - throw error
+                    throw new JsonFormattingException("Unexpected symbol: " + c);
+                }
             }
         }
 
@@ -204,79 +204,79 @@ public class JsonParser {
         while (state != STATE.FINISH) {
             switch (c) {
 
-                // Cases: Ignore
-                case ' ': // Just ignore spaces outside of values
-                    next();
-                    break;
-                case '\n': // Just ignore newlines outside of values
-                    next();
-                    break;
+            // Cases: Ignore
+            case ' ': // Just ignore spaces outside of values
+                next();
+                break;
+            case '\n': // Just ignore newlines outside of values
+                next();
+                break;
 
-                // Cases: Syntax
+            // Cases: Syntax
 
-                /**
-                 * Symbols:
-                 *
-                 * ([): Start array or inner array
-                 *
-                 * (,): End value
-                 *
-                 * (]): End array
-                 */
+            /**
+             * Symbols:
+             *
+             * ([): Start array or inner array
+             *
+             * (,): End value
+             *
+             * (]): End array
+             */
 
-                // Start parser or parse inner object
-                case '[':
-                    if (state == STATE.START) { // Start parser
-                        state = STATE.VALUE;
-                    } else if (state == STATE.VALUE) { // Parse inner array
-                        value = parseValue();
-                        list.add(value);
-                        state = STATE.VALUEDONE;
-                        value = null;
-                        break;
-
-                    } else { // { at unexpected place
-                        throw new JsonFormattingException("Started new array at unsupported place");
-                    }
-                    next();
-                    break;
-
-                // Continue if , after value
-                case ',':
-                    if (state != STATE.VALUEDONE) { // Error if (,) at unexpected place
-                        throw new JsonFormattingException("Starting new value (,) at wrong place");
-                    }
+            // Start parser or parse inner object
+            case '[':
+                if (state == STATE.START) { // Start parser
                     state = STATE.VALUE;
+                } else if (state == STATE.VALUE) { // Parse inner array
+                    value = parseValue();
+                    list.add(value);
+                    state = STATE.VALUEDONE;
+                    value = null;
+                    break;
+
+                } else { // { at unexpected place
+                    throw new JsonFormattingException("Started new array at unsupported place");
+                }
+                next();
+                break;
+
+            // Continue if , after value
+            case ',':
+                if (state != STATE.VALUEDONE) { // Error if (,) at unexpected place
+                    throw new JsonFormattingException("Starting new value (,) at wrong place");
+                }
+                state = STATE.VALUE;
+                next();
+                break;
+
+            // Stop parser
+            case ']':
+                if (state != STATE.VALUE && state != STATE.VALUEDONE) { // Error if (]) at unexpected place. Doesnt
+                                                                        // error on trailing comma.
+                    throw new JsonFormattingException("Array ended before value is done");
+                }
+                if (iter.hasNext()) { // Inner array
                     next();
+                }
+                state = STATE.FINISH;
+                break;
+
+            // Cases: Parsing
+            default:
+                switch (state) {
+
+                // Parse value
+                case VALUE:
+                    value = parseValue();
+                    list.add(value);
+                    state = STATE.VALUEDONE;
+                    value = null;
                     break;
 
-                // Stop parser
-                case ']':
-                    if (state != STATE.VALUE && state != STATE.VALUEDONE) { // Error if (]) at unexpected place. Doesnt
-                                                                            // error on trailing comma.
-                        throw new JsonFormattingException("Array ended before value is done");
-                    }
-                    if (iter.hasNext()) { // Inner array
-                        next();
-                    }
-                    state = STATE.FINISH;
-                    break;
-
-                // Cases: Parsing
-                default:
-                    switch (state) {
-
-                        // Parse value
-                        case VALUE:
-                            value = parseValue();
-                            list.add(value);
-                            state = STATE.VALUEDONE;
-                            value = null;
-                            break;
-
-                        default: // Fallthrough case - throw error
-                            throw new JsonFormattingException("Unexpected symbol: " + c);
-                    }
+                default: // Fallthrough case - throw error
+                    throw new JsonFormattingException("Unexpected symbol: " + c);
+                }
             }
         }
 
@@ -321,96 +321,96 @@ public class JsonParser {
 
         while (!fin) {
             switch (c) {
-                // Cases: Syntax
+            // Cases: Syntax
 
-                /**
-                 * Symbols
-                 *
-                 * (:): End of attribute, but not of a value
-                 *
-                 * (,): End of value
-                 *
-                 * (}): End of entire object
-                 */
+            /**
+             * Symbols
+             *
+             * (:): End of attribute, but not of a value
+             *
+             * (,): End of value
+             *
+             * (}): End of entire object
+             */
 
-                // End of attribute - else just read to value
-                case ':': {
-                    if (state == STATE.ATTRIBUTE) {
-                        fin = true;
-                    } else {
-                        value += c;
-                        next();
-                    }
-                    break;
+            // End of attribute - else just read to value
+            case ':': {
+                if (state == STATE.ATTRIBUTE) {
+                    fin = true;
+                } else {
+                    value += c;
+                    next();
                 }
+                break;
+            }
 
-                // End of value - else just read to attribute
-                case ',':
-                    if (state == STATE.VALUE && !string) { // Do not end if in a string
-                        fin = true;
-                    } else {
-                        value += c;
-                        next();
-                    }
-                    break;
-
-                // End of entire object
-                case '}':
+            // End of value - else just read to attribute
+            case ',':
+                if (state == STATE.VALUE && !string) { // Do not end if in a string
                     fin = true;
-                    break;
-
-                // End of entire array
-                case ']':
-                    fin = true;
-                    break;
-
-                // Cases: String handling
-
-                /**
-                 * Symbols
-                 *
-                 * ("): Starts and ends a String
-                 *
-                 * ( ): End value if not in String
-                 *
-                 * (\): Escape the next character
-                 */
-
-                // Start and end string
-                case '\"':
-                    if (!onValue) { // Begin String
-                        string = true;
-                        onValue = true;
-                    } else if (string) { // End String
-                        fin = true;
-                    }
-                    next();
-                    break;
-
-                // Read into string or end value
-                case ' ':
-                    if (string) { // Is part of string?
-                        value += c;
-                        next();
-                    } else if (onValue) { // Else end if already on value
-                        fin = true;
-                    } else { // Else is padding - ignore
-                        next();
-                    }
-                    break;
-
-                // Escape sequence - append next char to value
-                case '\\':
-                    next();
+                } else {
                     value += c;
                     next();
-                    break;
+                }
+                break;
 
-                // Just append to value
-                default:
+            // End of entire object
+            case '}':
+                fin = true;
+                break;
+
+            // End of entire array
+            case ']':
+                fin = true;
+                break;
+
+            // Cases: String handling
+
+            /**
+             * Symbols
+             *
+             * ("): Starts and ends a String
+             *
+             * ( ): End value if not in String
+             *
+             * (\): Escape the next character
+             */
+
+            // Start and end string
+            case '\"':
+                if (!onValue) { // Begin String
+                    string = true;
                     onValue = true;
+                } else if (string) { // End String
+                    fin = true;
+                }
+                next();
+                break;
+
+            // Read into string or end value
+            case ' ':
+                if (string) { // Is part of string?
                     value += c;
                     next();
+                } else if (onValue) { // Else end if already on value
+                    fin = true;
+                } else { // Else is padding - ignore
+                    next();
+                }
+                break;
+
+            // Escape sequence - append next char to value
+            case '\\':
+                next();
+                value += c;
+                next();
+                break;
+
+            // Just append to value
+            default:
+                onValue = true;
+                value += c;
+                next();
             }
         }
 
