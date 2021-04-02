@@ -3,8 +3,10 @@ package voteit.libs.json;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import voteit.libs.libutils.Utils;
+import voteit.modules.Constants;
 
 /**
  * JSON
@@ -283,11 +285,11 @@ public class JsonParser {
         return new JsonArray(list);
     }
 
-    private String parseAttribute() {
+    private String parseAttribute() throws JsonFormattingException {
         state = STATE.ATTRIBUTE; // Set incase of accidental usage
         try {
             return parse().asString();
-        } catch (WrongTypeException | UnsupportedTypeException | JsonFormattingException e) {
+        } catch (WrongTypeException | UnsupportedTypeException e) {
             // Shouldnt happen
             e.printStackTrace();
             System.out.println("Never should happen error happend: " + e.getMessage());
@@ -455,8 +457,12 @@ public class JsonParser {
     /**
      * Calls next on the iterator
      */
-    private void next() {
-        c = iter.next();
+    private void next() throws JsonFormattingException {
+        try {
+            c = iter.next();
+        } catch (NoSuchElementException e) {
+            throw new JsonFormattingException("Json ended unexpectedly");
+        }
     }
 
     private enum STATE {
