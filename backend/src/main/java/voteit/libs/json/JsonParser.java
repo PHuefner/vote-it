@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import voteit.libs.libutils.Utils;
-import voteit.modules.Constants;
 
 /**
  * JSON

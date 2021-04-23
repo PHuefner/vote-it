@@ -5,8 +5,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import voteit.libs.json.JsonObject;
+import voteit.libs.json.KeyNotFoundException;
+import voteit.libs.json.WrongTypeException;
 
 /**
  * VoteidDB Class
@@ -38,6 +41,11 @@ public class VoteitDB {
                     + "FOREIGN KEY (userId) REFERENCES VoteitUsers(userId) ON UPDATE SET NULL,"
                     + "FOREIGN KEY (pollId) REFERENCES VoteitPolls(pollId) ON UPDATE SET NULL);");
 
+            database.createStatement()
+                    .execute("CREATE TABLE Nutzer_Thema(userId INT, topicId INT,"
+                            + "FOREIGN KEY (userId) REFERENCES VoteitUsers(userId) ON UPDATE SET NULL,"
+                            + "FOREIGN KEY (topicId) REFERENCES VoteitTopics(topicId) ON UPDATE SET NULL);");
+
             database.createStatement().execute("CREATE TABLE UserTokens(token INT PRIMARY KEY, userId INT,"
                     + "FOREIGN KEY (userId) REFERENCES VoteitUsers(userId) ON DELETE CASCADE)");
         } catch (SQLException e) {
@@ -57,133 +65,118 @@ public class VoteitDB {
         }
     }
 
-    public static ResultSet getTable(String name) {
-        try {
-            return database.createStatement().executeQuery("SELECT * FROM " + name);
-        } catch (SQLException e) {
-            System.out.println("Couldn't read table from database.");
-            System.out.println(e.getMessage());
-            System.exit(20);
-            return null;
-        }
+    public static ResultSet getTable(String name) throws SQLException {
+        return database.createStatement().executeQuery("SELECT * FROM " + name);
     }
 
-    public static ResultSet getUser(int id) {
-        try {
-            PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitUsers WHERE userId=?");
-            ps.setInt(1, id);
-            return ps.executeQuery();
-        } catch (SQLException e) {
-            System.out.println("Couldn't find user in database.");
-            System.out.println(e.getMessage());
-            return null;
-        }
+    public static ResultSet getUser(int id) throws SQLException {
+        PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitUsers WHERE userId=?");
+        ps.setInt(1, id);
+        return ps.executeQuery();
     }
 
-    public static ResultSet getUser(String name, String password) {
-        try {
-            PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitUsers WHERE name=? AND password=?");
-            ps.setString(1, name);
-            ps.setString(2, password);
-            return ps.executeQuery();
-        } catch (SQLException e) {
-            System.out.println("Couldn't find user in database.");
-            System.out.println(e.getMessage());
-            return null;
-        }
+    public static ResultSet getUser(String name, String password) throws SQLException {
+        PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitUsers WHERE name=? AND password=?");
+        ps.setString(1, name);
+        ps.setString(2, password);
+        return ps.executeQuery();
     }
 
-    public static ResultSet getPoll(int id) {
-        try {
-            PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitPolls WHERE pollId=?");
-            ps.setInt(1, id);
-            return ps.executeQuery();
-        } catch (SQLException e) {
-            System.out.println("Couldn't find poll in database.");
-            System.out.println(e.getMessage());
-            return null;
-        }
+    public static ResultSet getPoll(int id) throws SQLException {
+        PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitPolls WHERE pollId=?");
+        ps.setInt(1, id);
+        return ps.executeQuery();
     }
 
-    public static void delete(String table, int id) {
-        try {
-            PreparedStatement ps;
-            if (table.contains("Topics")) {
-                ps = database.prepareStatement("DELETE FROM " + table + " WHERE topicId=?");
-            } else if (table.contains("Polls")) {
-                ps = database.prepareStatement("DELETE FROM " + table + " WHERE pollId=?");
-            } else if (table.contains("Users")) {
-                ps = database.prepareStatement("DELETE FROM " + table + " WHERE userId=?");
-            } else {
-                System.out.println("Couldn't get table.");
-                return;
-            }
-
-            ps.setInt(1, id);
-            ps.executeUpdate();
-            return;
-        } catch (Exception e) {
-            System.out.println("Couldn't delete data.");
-            System.out.println(e.getMessage());
-            return;
-        }
+    public static ResultSet getTopic(int id) throws SQLException {
+        PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitTopics WHERE topicId=?");
+        ps.setInt(1, id);
+        return ps.executeQuery();
     }
 
-    public static void addData(String table, JsonObject object) {
-        try {
-            PreparedStatement ps = null;
-            if (table.contains("Topics")) {
-                ps = database.prepareStatement(
-                        "INSERT INTO VoteitTopics(title,votes,content,userId,pollId) VALUES (?,?,?,?,?)");
-                ps.setString(1, object.getString("title"));
-                ps.setInt(2, object.getInteger("votes"));
-                ps.setString(3, object.getString("content"));
-                ps.setInt(4, object.getInteger("userId"));
-                ps.setInt(5, object.getInteger("pollId"));
-            } else if (table.contains("Polls")) {
-                // TODO finish method
-            } else if (table.contains("Users")) {
-
-            } else {
-                System.out.println("Couldn't find table.");
-                return;
-            }
-
-            ps.executeUpdate();
-            return;
-        } catch (Exception e) {
-            System.out.println("Couldn't insert data.");
-            System.out.println(e.getMessage());
-            return;
-        }
+    public static void deleteUser(int id) throws SQLException {
+        PreparedStatement ps = database.prepareStatement("DELETE FROM VoteitUsers WHERE userId=?");
+        ps.setInt(1, id);
+        ps.executeUpdate();
     }
 
-    public static void updateData(String table, JsonObject object) {
-        try {
-            PreparedStatement ps = null;
-            if (table.contains("Topics")) {
-                ps = database.prepareStatement(
-                        "UPDATE TABLE VoteitTopics SET title = ?, votes = ?, content = ?, userId = ?, pollId = ? WHERE topicId = ?");
-                ps.setString(1, object.getString("title"));
-                ps.setInt(2, object.getInteger("votes"));
-                ps.setString(3, object.getString("content"));
-                ps.setInt(4, object.getInteger("userId"));
-                ps.setInt(5, object.getInteger("pollId"));
-            } else if (table.contains("Polls")) {
-                // TODO finish method
-            } else if (table.contains("Users")) {
+    public static void deleteTopic(int id) throws SQLException {
+        PreparedStatement ps = database.prepareStatement("DELETE FROM VoteitTopics WHERE topicId=?");
+        ps.setInt(1, id);
+        ps.executeUpdate();
+    }
 
-            } else {
-                System.out.println("Couldn't find table.");
-            }
+    public static void deletePoll(int id) throws SQLException {
+        PreparedStatement ps = database.prepareStatement("DELETE FROM VoteitPolls WHERE pollId=?");
+        ps.setInt(1, id);
+        ps.executeQuery();
+    }
 
-            ps.executeUpdate();
-            return;
-        } catch (Exception e) {
-            System.out.println("Couldn't change data.");
-            System.out.println(e.getMessage());
-            return;
-        }
+    public static void addTopic(JsonObject topic) throws SQLException, KeyNotFoundException, WrongTypeException {
+        PreparedStatement ps;
+        ps = database
+                .prepareStatement("INSERT INTO VoteiTopics(title, votes, content, userId, pollId) VALUES (?,?,?,?,?)");
+        ps.setString(1, topic.getString("title"));
+        ps.setInt(2, topic.getInteger("votes"));
+        ps.setString(3, topic.getString("content"));
+        ps.setInt(4, topic.getInteger("userId"));
+        ps.setInt(5, topic.getInteger("pollId"));
+        ps.executeUpdate();
+    }
+
+    public static void addUser(JsonObject user) throws SQLException, KeyNotFoundException, WrongTypeException {
+        PreparedStatement ps;
+        ps = database.prepareStatement("INSERT INTO VoteitUsers(lastname, name, password) VALUES (?,?,?)");
+        ps.setString(1, user.getString("lastname"));
+        ps.setString(2, user.getString("name"));
+        ps.setString(3, user.getString("password"));
+        ps.executeUpdate();
+    }
+
+    public static void addPoll(JsonObject poll) throws SQLException, KeyNotFoundException, WrongTypeException {
+        PreparedStatement ps;
+        ps = database.prepareStatement("INSERT INTO VoteitPolls(place, pollBegin, date, pollEnd) VALUES (?,?,?,?)");
+        ps.setString(1, poll.getString("place"));
+        ps.setTimestamp(2, new Timestamp(poll.getInteger("pollBegin")));
+        ps.setTimestamp(3, new Timestamp(poll.getInteger("date")));
+        ps.setTimestamp(4, new Timestamp(poll.getInteger("pollEnd")));
+        ps.executeUpdate();
+    }
+
+    public static void updateTopic(JsonObject topic) throws SQLException, KeyNotFoundException, WrongTypeException {
+        PreparedStatement ps;
+        ps = database.prepareStatement(
+                "UPDATE TABLE VoteitTopics SET title = ?, votes = ?, content = ?, userId = ?, pollId = ? WHERE topicId = ?");
+        ps.setString(1, topic.getString("title"));
+        ps.setInt(2, topic.getInteger("votes"));
+        ps.setString(3, topic.getString("content"));
+        ps.setInt(4, topic.getInteger("userId"));
+        ps.setInt(5, topic.getInteger("pollId"));
+        ps.setInt(6, topic.getInteger("topicId"));
+        ps.executeUpdate();
+    }
+
+    public static void updateUser(JsonObject user) throws SQLException, KeyNotFoundException, WrongTypeException {
+        PreparedStatement ps;
+        ps = database
+                .prepareStatement("UPDATE TABLE VoteitUsers SET lastname = ?, name = ?, password = ? WHERE userId = ?");
+        ps.setString(1, user.getString("lastname"));
+        ps.setString(2, user.getString("name"));
+        ps.setString(3, user.getString("password"));
+        ps.setInt(4, user.getInteger("userId"));
+        ps.executeUpdate();
+    }
+
+    public static void updatePoll(JsonObject poll) throws SQLException, KeyNotFoundException, WrongTypeException {
+        PreparedStatement ps;
+        ps = database.prepareStatement(
+                "UPDATE TABLE VoteitPolls SET place = ?, pollBegin = ?, date = ?, pollEnd = ? WHERE pollId = ?");
+        ps.setString(1, poll.getString("place"));
+        ps.setTimestamp(2, new Timestamp(poll.getInteger("pollBegin")));
+        ps.setTimestamp(3, new Timestamp(poll.getInteger("date")));
+        ps.setTimestamp(4, new Timestamp(poll.getInteger("pollEnd")));
+        ps.setInt(5, poll.getInteger("pollId"));
+        ps.executeUpdate();
     }
 
     public static void createConnection() {

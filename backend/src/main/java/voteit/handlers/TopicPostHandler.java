@@ -1,6 +1,8 @@
 package voteit.handlers;
 
-import voteit.Manager;
+import java.sql.SQLException;
+
+import voteit.VoteitDB;
 import voteit.libs.json.JsonFormattingException;
 import voteit.libs.json.JsonObject;
 import voteit.libs.json.JsonParser;
@@ -21,36 +23,29 @@ public class TopicPostHandler implements Handler {
             JsonObject object = null;
             try {
                 object = parser.buildObject(context.requestData);
-            } catch (UnsupportedTypeException | JsonFormattingException e) {
+                VoteitDB.updateTopic(object);
+            } catch (KeyNotFoundException | WrongTypeException | UnsupportedTypeException | JsonFormattingException e) {
                 System.out.println("Json error on edit topic");
                 System.out.println(e.getMessage());
                 return Constants.genericJsonError(e);
+            } catch (SQLException e) {
+                return Constants.genericServerError();
             }
-
-            Manager.updateTopic(object);
 
             return new Response("Topic updated");
 
         } else if (context.route.contains("delete")) {
             JsonObject object = null;
-            try {
-                object = parser.buildObject(context.requestData);
-            } catch (UnsupportedTypeException | JsonFormattingException e) {
-                System.out.println("Json error on edit topic");
-                System.out.println(e.getMessage());
-                return Constants.genericJsonError(e);
-            }
 
             try {
-                Manager.deleteTopic(object.getInteger("topicId"));
-            } catch (NullPointerException e) {
-                System.out.println("Couldn't delete topic.");
-                System.out.println(e.getMessage());
-                return new Response("An error occured. Please try again.");
-            } catch (KeyNotFoundException | WrongTypeException e) {
-                System.out.println("Json error on edit topic");
+                object = parser.buildObject(context.requestData);
+                VoteitDB.deleteTopic(object.getInteger("topicId"));
+            } catch (KeyNotFoundException | WrongTypeException | UnsupportedTypeException | JsonFormattingException e) {
+                System.out.println("Json error on delete topic");
                 System.out.println(e.getMessage());
                 return Constants.genericJsonError(e);
+            } catch (SQLException e) {
+                return Constants.genericServerError();
             }
 
             return new Response("Topic deleted");
@@ -59,15 +54,17 @@ public class TopicPostHandler implements Handler {
             return Constants.genericNotImplemented();
         } else if (context.route.contains("submit")) {
             JsonObject object = null;
+
             try {
                 object = parser.buildObject(context.requestData);
-            } catch (UnsupportedTypeException | JsonFormattingException e) {
+                VoteitDB.addTopic(object);
+            } catch (SQLException e) {
+                return Constants.genericServerError();
+            } catch (KeyNotFoundException | WrongTypeException | UnsupportedTypeException | JsonFormattingException e) {
                 System.out.println("Json error on submit topic");
                 System.out.println(e.getMessage());
                 return Constants.genericJsonError(e);
             }
-
-            Manager.addTopic(object);
 
             return new Response("Topic submitted");
         } else {

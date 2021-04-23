@@ -6,6 +6,7 @@ import voteit.handlers.GetHandler;
 import voteit.handlers.PollPostHandler;
 import voteit.handlers.TopicPostHandler;
 import voteit.handlers.UserLoginHandler;
+import voteit.handlers.UserPostHandler;
 import voteit.libs.serverhttp.Context;
 import voteit.libs.serverhttp.Handler;
 import voteit.libs.serverhttp.ServerHttp;
@@ -28,7 +29,7 @@ public class Main {
 
         GetHandler getHandler = new GetHandler();
         TopicPostHandler topicPostHandler = new TopicPostHandler();
-        UserLoginHandler userPostHandler = new UserLoginHandler();
+        UserPostHandler userPostHandler = new UserPostHandler();
         PollPostHandler pollPostHandler = new PollPostHandler();
         UserLoginHandler userLoginHandler = new UserLoginHandler();
         Handler notFoundHandler = (Context context) -> {

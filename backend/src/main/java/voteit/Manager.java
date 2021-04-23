@@ -46,26 +46,6 @@ public class Manager {
         return DataStructureFactory.buildPoll(rs);
     }
 
-    public static void deleteUser(int userId) {
-        VoteitDB.delete("VoteitUsers", userId);
-    }
-
-    public static void deletePoll(int pollId) {
-        VoteitDB.delete("VoteitPolls", pollId);
-    }
-
-    public static void deleteTopic(int topicId) {
-        VoteitDB.delete("VoteitTopics", topicId);
-    }
-
-    public static void addTopic(JsonObject object) {
-        VoteitDB.addData("VoteitTopics", object);
-    }
-
-    public static void updateTopic(JsonObject object) {
-        VoteitDB.updateData("VoteitTopics", object);
-    }
-
     public static int loginUser(String name, String password) throws LoginNotFoundException, SQLException {
         boolean done = false;
         int token = 0;
