@@ -3,12 +3,7 @@ package voteit.handlers;
 import java.sql.SQLException;
 
 import voteit.Manager;
-import voteit.libs.json.JsonFormattingException;
-import voteit.libs.json.JsonObject;
-import voteit.libs.json.JsonParser;
-import voteit.libs.json.KeyNotFoundException;
-import voteit.libs.json.UnsupportedTypeException;
-import voteit.libs.json.WrongTypeException;
+import voteit.libs.json.*;
 import voteit.libs.serverhttp.Context;
 import voteit.libs.serverhttp.Handler;
 import voteit.libs.serverhttp.Response;
@@ -19,7 +14,6 @@ public class UserLoginHandler implements Handler {
 
     @Override
     public Response handle(Context context) {
-        // TODO Auto-generated method stub
 
         JsonParser parser = new JsonParser();
         JsonObject object = null;

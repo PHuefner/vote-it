@@ -65,10 +65,6 @@ public class VoteitDB {
         }
     }
 
-    public static ResultSet getTable(String name) throws SQLException {
-        return database.createStatement().executeQuery("SELECT * FROM " + name);
-    }
-
     public static ResultSet getUser(int id) throws SQLException {
         PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitUsers WHERE userId=?");
         ps.setInt(1, id);
@@ -82,15 +78,30 @@ public class VoteitDB {
         return ps.executeQuery();
     }
 
+    public static ResultSet getUsers() throws SQLException {
+        PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitUsers");
+        return ps.executeQuery();
+    }
+
     public static ResultSet getPoll(int id) throws SQLException {
         PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitPolls WHERE pollId=?");
         ps.setInt(1, id);
         return ps.executeQuery();
     }
 
+    public static ResultSet getPolls() throws SQLException {
+        PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitPolls");
+        return ps.executeQuery();
+    }
+
     public static ResultSet getTopic(int id) throws SQLException {
         PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitTopics WHERE topicId=?");
         ps.setInt(1, id);
+        return ps.executeQuery();
+    }
+
+    public static ResultSet getTopics() throws SQLException {
+        PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitTopics");
         return ps.executeQuery();
     }
 

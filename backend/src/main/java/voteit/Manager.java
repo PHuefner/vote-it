@@ -3,10 +3,7 @@ package voteit;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import voteit.libs.json.JsonArray;
-import voteit.libs.json.JsonObject;
 import voteit.modules.LoginNotFoundException;
-import voteit.resources.DataStructureFactory;
 
 /**
  * Manager Class
@@ -15,36 +12,6 @@ import voteit.resources.DataStructureFactory;
  * delete datasets
  */
 public class Manager {
-
-    public static JsonArray getTopics() throws SQLException {
-        JsonArray topicArray = new JsonArray();
-        ResultSet rs = VoteitDB.getTable("VoteitTopics");
-        while (rs.next()) {
-            topicArray.add(DataStructureFactory.buildTopic(rs));
-        }
-        return topicArray;
-    }
-
-    public static JsonArray getUsers() throws SQLException {
-        JsonArray userArray = new JsonArray();
-        ResultSet rs = VoteitDB.getTable("VoteitUsers");
-        while (rs.next()) {
-            userArray.add(DataStructureFactory.buildUser(rs));
-        }
-        return userArray;
-    }
-
-    public static JsonObject getUserJson(int id) throws SQLException {
-        ResultSet rs = VoteitDB.getUser(id);
-        rs.next();
-        return DataStructureFactory.buildUser(rs);
-    }
-
-    public static JsonObject getPollJson(int id) throws SQLException {
-        ResultSet rs = VoteitDB.getPoll(id);
-        rs.next();
-        return DataStructureFactory.buildPoll(rs);
-    }
 
     public static int loginUser(String name, String password) throws LoginNotFoundException, SQLException {
         boolean done = false;
