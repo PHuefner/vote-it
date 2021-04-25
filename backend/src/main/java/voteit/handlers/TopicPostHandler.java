@@ -3,6 +3,7 @@ package voteit.handlers;
 import java.sql.SQLException;
 
 import voteit.VoteitDB;
+import voteit.libs.json.JsonArray;
 import voteit.libs.json.JsonFormattingException;
 import voteit.libs.json.JsonObject;
 import voteit.libs.json.JsonParser;
@@ -51,7 +52,18 @@ public class TopicPostHandler implements Handler {
             return new Response("Topic deleted");
 
         } else if (context.route.contains("vote")) {
-            return Constants.genericNotImplemented();
+            
+            try {
+                JsonArray array = parser.buildArray(context.requestData);
+                VoteitDB.voteForTopic(array.getObject(0).getInteger("topicId"), array.getObject(1).getInteger("userId"));
+            } catch (JsonFormattingException | KeyNotFoundException | WrongTypeException | UnsupportedTypeException e) {
+                System.out.println(e.getMessage());
+                return Constants.genericJsonError(e);
+            } catch (SQLException e) {
+                return Constants.genericServerError();
+            }
+
+            return new Response("Voted succesfully");
         } else if (context.route.contains("submit")) {
             JsonObject object = null;
 

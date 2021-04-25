@@ -42,7 +42,7 @@ public class VoteitDB {
                     + "FOREIGN KEY (pollId) REFERENCES VoteitPolls(pollId) ON UPDATE SET NULL);");
 
             database.createStatement()
-                    .execute("CREATE TABLE Nutzer_Thema(userId INT, topicId INT,"
+                    .execute("CREATE TABLE User_Topic(userId INT, topicId INT,"
                             + "FOREIGN KEY (userId) REFERENCES VoteitUsers(userId) ON UPDATE SET NULL,"
                             + "FOREIGN KEY (topicId) REFERENCES VoteitTopics(topicId) ON UPDATE SET NULL);");
 
@@ -102,6 +102,18 @@ public class VoteitDB {
 
     public static ResultSet getTopics() throws SQLException {
         PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitTopics");
+        return ps.executeQuery();
+    }
+
+    public static ResultSet getVotesByTopic(int topicId) throws SQLException {
+        PreparedStatement ps = database.prepareStatement("SELECT COUNT(*) AS Anzahl FROM User_Topic WHERE topicId=?");
+        ps.setInt(1, topicId);
+        return ps.executeQuery();
+    }
+
+    public static ResultSet getVotesByUser(int userId) throws SQLException {
+        PreparedStatement ps = database.prepareStatement("SELECT COUNT(*) AS Anzahl FROM User_Topic WHERE userId=?");
+        ps.setInt(1, userId);
         return ps.executeQuery();
     }
 
@@ -187,6 +199,14 @@ public class VoteitDB {
         ps.setTimestamp(3, new Timestamp(poll.getInteger("date")));
         ps.setTimestamp(4, new Timestamp(poll.getInteger("pollEnd")));
         ps.setInt(5, poll.getInteger("pollId"));
+        ps.executeUpdate();
+    }
+
+    public static void voteForTopic(int topic, int user) throws SQLException {
+        PreparedStatement ps;
+        ps = database.prepareStatement("INSERT INTO User_Topic(topicId, userId) VALUES (?,?)");
+        ps.setInt(1, topic);
+        ps.setInt(2, user);
         ps.executeUpdate();
     }
 
