@@ -1,0 +1,10 @@
+@use "../public.scss" as *;
+
+.button {
+  @include button;
+}
+
+#login {
+  @include popupForm($dist_l);
+  font-size: 2rem;
+}

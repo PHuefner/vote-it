@@ -25,6 +25,14 @@ public class JsonParser {
     private STATE state; // Current parser state
     private boolean started = false; // Did parser already start (used for inner objects)
 
+    public static JsonObject parseObject(String jsonString) throws JsonFormattingException, UnsupportedTypeException {
+        return new JsonParser().buildObject(jsonString);
+    }
+
+    public static JsonArray parseArray(String jsonString) throws JsonFormattingException, UnsupportedTypeException {
+        return new JsonParser().buildArray(jsonString);
+    }
+
     public JsonObject buildObject(String jsonString) throws JsonFormattingException, UnsupportedTypeException {
         iter = Utils.stringToCharList(jsonString).iterator();
         JsonObject object = buildObjectWithIter();
@@ -438,6 +446,11 @@ public class JsonParser {
         // Integer
         try {
             return new Value(Integer.parseInt(value));
+        } catch (Exception e) {
+        }
+
+        try {
+            return new Value(Long.parseLong(value));
         } catch (Exception e) {
         }
 

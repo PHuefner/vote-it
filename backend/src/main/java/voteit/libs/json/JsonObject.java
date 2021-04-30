@@ -41,6 +41,18 @@ public class JsonObject {
         }
     }
 
+    public long getLong(String key) throws KeyNotFoundException, WrongTypeException {
+        Value value = map.get(key);
+        if (value == null) {
+            throw new KeyNotFoundException("No value for key " + key);
+        }
+        try {
+            return value.asLong();
+        } catch (WrongTypeException e) {
+            throw new WrongTypeException(key + " : " + e.getMessage());
+        }
+    }
+
     public double getDouble(String key) throws KeyNotFoundException, WrongTypeException {
         Value value = map.get(key);
         if (value == null) {

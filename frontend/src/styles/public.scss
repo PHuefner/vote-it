@@ -1,0 +1,78 @@
+/* Colors */
+$bg_dark: #191919 !default;
+$bg: #292929 !default;
+$bg_bright: #393939 !default;
+
+$blue_dark: #274972 !default;
+$blue: #326299 !default;
+$blue_bright: #3e7ac1 !default;
+
+/* General pixel values */
+
+$radius_small: 7px;
+$radius_medium: 20px;
+
+$dist_xs: 5px;
+$dist_s: 7px;
+$dist_m: 15px;
+$dist_l: 30px;
+
+/* Buttons */
+@mixin button {
+  color: white;
+  margin: 5px;
+  border: 0;
+  background-color: $bg_dark;
+  border-radius: 7px;
+  padding: 5px 15px;
+
+  &:hover {
+    background-color: $bg_bright;
+  }
+
+  &:active {
+    background-color: $bg_dark;
+  }
+}
+
+@mixin searchWrapper {
+  padding-right: 0px;
+  border-radius: $radius_small;
+}
+
+@mixin searchContent {
+  padding-right: 0px;
+  border-radius: $radius_small 0 0 $radius_small;
+}
+
+@mixin searchButton {
+  border-radius: 0 $radius_small $radius_small 0;
+}
+
+@mixin popupForm($margins) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  h1 {
+    font-size: 3rem;
+    margin: 0;
+    margin-bottom: $dist_l;
+  }
+
+  input {
+    margin-bottom: $margins;
+    border: 0;
+    border-radius: $radius_small;
+    padding: $dist_s;
+    font-size: inherit;
+  }
+
+  button {
+    flex: 1;
+    font-size: inherit;
+  }
+
+  .vspacer {
+    flex: 2;
+  }
+}

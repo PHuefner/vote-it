@@ -1,0 +1,13 @@
+@use "../public" as *;
+
+#main {
+  width: 70%;
+  background-color: $bg;
+  margin: auto;
+  padding: $dist_m;
+}
+
+#pageTitle {
+  margin: auto;
+  margin-top: 0;
+}
