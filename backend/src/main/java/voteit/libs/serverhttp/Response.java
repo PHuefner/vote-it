@@ -30,6 +30,12 @@ public class Response {
         this.contentType = "application/json";
     }
 
+    public Response(int status) {
+        this.status = status;
+        this.response = "";
+        this.contentType = "text/plain";
+    }
+
     public Response setStatus(int status) {
         this.status = status;
         return this;
@@ -47,7 +53,7 @@ public class Response {
         out.append("Access-Control-Allow-Origin: *\n");
         if (!headers.isEmpty()) {
             headers.forEach((k, v) -> {
-                out.append(String.format("Set-Cookie: %s=%s;\n", k, v));
+                out.append(String.format("Set-Cookie: %s=%s; HttpOnly; Path=/\n", k, v));
             });
         }
         out.append("\n");

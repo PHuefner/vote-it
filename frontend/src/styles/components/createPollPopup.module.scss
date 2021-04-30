@@ -1,0 +1,17 @@
+@use "../public.scss" as *;
+
+.button {
+  @include button;
+}
+
+#post {
+  @include popupForm($dist_s);
+  font-size: 1.2rem;
+
+  .datePicker {
+    display: flex;
+    span {
+      margin: auto $dist_s;
+    }
+  }
+}

@@ -10,6 +10,7 @@ class Value {
     String str;
     int integer;
     double fp;
+    long longInt;
     boolean bool;
     JsonObject object;
     JsonArray array;
@@ -28,6 +29,11 @@ class Value {
     Value(double fp) {
         this.fp = fp;
         type = TYPE.DOUBLE;
+    }
+
+    Value(long longInt) {
+        this.longInt = longInt;
+        type = TYPE.LONG;
     }
 
     Value(boolean bool) {
@@ -58,6 +64,14 @@ class Value {
             return integer;
         } else {
             throw new WrongTypeException("Value is not a Integer");
+        }
+    }
+
+    public long asLong() throws WrongTypeException {
+        if (type == TYPE.LONG) {
+            return longInt;
+        } else {
+            throw new WrongTypeException("Value is not a Long");
         }
     }
 
@@ -98,23 +112,23 @@ class Value {
 
         try {
             switch (type) {
-                case STRING:
-                    if(str == null){
-                        throw new NullPointerException();
-                    }
-                    return "\"" + str + "\"";
-                case INTEGER:
-                    return Integer.toString(integer);
-                case DOUBLE:
-                    return Double.toString(fp);
-                case BOOLEAN:
-                    return Boolean.toString(bool);
-                case OBJECT:
-                    return object.toString();
-                case ARRAY:
-                    return array.toString();
-                default:
-                    return null;
+            case STRING:
+                if (str == null) {
+                    throw new NullPointerException();
+                }
+                return "\"" + str + "\"";
+            case INTEGER:
+                return Integer.toString(integer);
+            case DOUBLE:
+                return Double.toString(fp);
+            case BOOLEAN:
+                return Boolean.toString(bool);
+            case OBJECT:
+                return object.toString();
+            case ARRAY:
+                return array.toString();
+            default:
+                return null;
 
             }
         } catch (NullPointerException e) {
@@ -123,7 +137,7 @@ class Value {
     }
 
     enum TYPE {
-        STRING, INTEGER, DOUBLE, BOOLEAN, OBJECT, ARRAY
+        STRING, INTEGER, DOUBLE, BOOLEAN, OBJECT, ARRAY, LONG
     }
 
 }

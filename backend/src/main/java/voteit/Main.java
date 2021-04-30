@@ -2,11 +2,8 @@ package voteit;
 
 import java.io.IOException;
 
-import voteit.handlers.GetHandler;
-import voteit.handlers.PollPostHandler;
-import voteit.handlers.TopicPostHandler;
-import voteit.handlers.UserLoginHandler;
-import voteit.handlers.UserPostHandler;
+import voteit.handlers.PollHandler;
+import voteit.handlers.UserHandler;
 import voteit.libs.serverhttp.Context;
 import voteit.libs.serverhttp.Handler;
 import voteit.libs.serverhttp.ServerHttp;
@@ -23,15 +20,9 @@ public class Main {
     // docker run -p 5432:5432 -e POSTGRES_PASSWORD=pw -e POSTGRES_USER=voteit
     // postgres
     public static void main(String[] args) {
-        String routeBase = "/api/";
         ServerHttp server = null;
         // TODO set negative Response status
 
-        GetHandler getHandler = new GetHandler();
-        TopicPostHandler topicPostHandler = new TopicPostHandler();
-        UserPostHandler userPostHandler = new UserPostHandler();
-        PollPostHandler pollPostHandler = new PollPostHandler();
-        UserLoginHandler userLoginHandler = new UserLoginHandler();
         Handler notFoundHandler = (Context context) -> {
             return Constants.genericNotFound();
         };
@@ -48,21 +39,8 @@ public class Main {
         }
 
         try {
-            server.addRoute(routeBase + "topics/get", getHandler);
-            server.addRoute(routeBase + "topics/edit", topicPostHandler);
-            server.addRoute(routeBase + "topics/delete", topicPostHandler);
-            server.addRoute(routeBase + "topics/vote", topicPostHandler);
-            server.addRoute(routeBase + "topics/submit", topicPostHandler);
-            server.addRoute(routeBase + "user/data", getHandler);
-            server.addRoute(routeBase + "user/login", userPostHandler);
-            server.addRoute(routeBase + "user/register", userPostHandler);
-            server.addRoute(routeBase + "user/delete", userPostHandler);
-            server.addRoute(routeBase + "user/edit", userPostHandler);
-            server.addRoute(routeBase + "user/login", userLoginHandler);
-            server.addRoute(routeBase + "poll/get", getHandler);
-            server.addRoute(routeBase + "poll/create", pollPostHandler);
-            server.addRoute(routeBase + "poll/delete", pollPostHandler);
-            server.addRoute(routeBase + "poll/edit", pollPostHandler);
+            PollHandler.addHandlers(server);
+            UserHandler.addHandlers(server);
             server.setNotFoundHandler(notFoundHandler);
         } catch (Exception e) {
             System.out.println("Couldn't create contexts.");

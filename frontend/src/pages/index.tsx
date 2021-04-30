@@ -1,19 +1,30 @@
-import TopicList, { TopicData } from "components/topicList";
-import { useDispatch, useSelector } from "react-redux";
-import { addTopic, fetchTopic } from "store/features/topics";
-import { RootState } from "store/store";
-import style from "styles/pages/Index.module.css";
+import Header from "components/header";
+import { useEffect, useState } from "react";
+import style from "styles/pages/index.module.scss";
 
 export default function Index() {
-  const topics = useSelector((state: RootState) => state.topics.topics);
-  const dispatch = useDispatch();
+  const [polls, setPolls] = useState([]);
+  useEffect(() => {
+    fetch("http://localhost:3001/api/poll/get").then(async (res) => {
+      setPolls(JSON.parse(await res.text()));
+    });
+  }, []);
 
   return (
     <div>
-      <button onClick={() => dispatch(fetchTopic())}>
-        Get Topics from TestAPI
-      </button>
-      <TopicList topics={topics} manage={false}></TopicList>
+      <Header />
+      <div id={style.main}>
+        <h1 id={style.pageTitle}>Polls</h1>
+        {polls.map((el) => {
+          return (
+            <div>
+              <span>Ort: {el.place}</span>
+              <br />
+              <span>Meeting: {new Date(el.date).toString()}</span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

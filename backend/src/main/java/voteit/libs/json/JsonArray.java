@@ -41,6 +41,18 @@ public class JsonArray {
         }
     }
 
+    public long getLong(int index) throws KeyNotFoundException, WrongTypeException {
+        Value value = values.get(index);
+        if (value == null) {
+            throw new KeyNotFoundException("No value for key " + index);
+        }
+        try {
+            return value.asLong();
+        } catch (WrongTypeException e) {
+            throw new WrongTypeException(index + " : " + e.getMessage());
+        }
+    }
+
     public double getDouble(int index) throws KeyNotFoundException, WrongTypeException {
         Value value = values.get(index);
         if (value == null) {
