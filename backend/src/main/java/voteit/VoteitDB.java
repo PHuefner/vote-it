@@ -203,8 +203,8 @@ public class VoteitDB {
         ps = database.prepareStatement("INSERT INTO VoteitPolls(place, pollBegin, date, pollEnd) VALUES (?,?,?,?)");
         ps.setString(1, place);
         ps.setTimestamp(2, new Timestamp(pollBegin));
-        ps.setTimestamp(3, new Timestamp(pollEnd));
-        ps.setTimestamp(4, new Timestamp(date));
+        ps.setTimestamp(3, new Timestamp(date));
+        ps.setTimestamp(4, new Timestamp(pollEnd));
         ps.executeUpdate();
     }
 
