@@ -1,4 +1,4 @@
-package voteit.modules;
+package voteit.modules.exceptions;
 
 public class LoginNotFoundException extends Exception {
 

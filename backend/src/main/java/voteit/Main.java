@@ -3,6 +3,7 @@ package voteit;
 import java.io.IOException;
 
 import voteit.handlers.PollHandler;
+import voteit.handlers.TopicsHandler;
 import voteit.handlers.UserHandler;
 import voteit.libs.serverhttp.Context;
 import voteit.libs.serverhttp.Handler;
@@ -41,6 +42,7 @@ public class Main {
         try {
             PollHandler.addHandlers(server);
             UserHandler.addHandlers(server);
+            TopicsHandler.addHandlers(server);
             server.setNotFoundHandler(notFoundHandler);
         } catch (Exception e) {
             System.out.println("Couldn't create contexts.");

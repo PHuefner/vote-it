@@ -1,6 +1,6 @@
 package voteit.libs.json;
 
-public class KeyNotFoundException extends Exception {
+public class KeyNotFoundException extends JsonException {
 
     private static final long serialVersionUID = 844605632133684L;
 

@@ -49,7 +49,11 @@ public class JsonArray {
         try {
             return value.asLong();
         } catch (WrongTypeException e) {
-            throw new WrongTypeException(index + " : " + e.getMessage());
+            try {
+                return value.asInt();
+            } catch (WrongTypeException e0) {
+                throw new WrongTypeException(index + " : " + e.getMessage());
+            }
         }
     }
 

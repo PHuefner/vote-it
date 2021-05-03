@@ -49,7 +49,11 @@ public class JsonObject {
         try {
             return value.asLong();
         } catch (WrongTypeException e) {
-            throw new WrongTypeException(key + " : " + e.getMessage());
+            try {
+                return value.asInt();
+            } catch (WrongTypeException e0) {
+                throw new WrongTypeException(key + " : " + e.getMessage());
+            }
         }
     }
 

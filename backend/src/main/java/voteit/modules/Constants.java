@@ -5,6 +5,7 @@ import voteit.libs.serverhttp.Response;
 public class Constants {
 
     public static final String LOGINTOKENCOOKIEKEY = "LoginTokenUserIdName";
+    public static final String SQLUNIQUEVIOLATION = "23505";
 
     public static Response genericServerError() {
         return new Response("Internal server error").setStatus(500);
