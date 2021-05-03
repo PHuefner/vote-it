@@ -158,10 +158,11 @@ public class VoteitDB {
 
     public static void updateUser(String name, String password, boolean admin, int userId) throws SQLException {
         PreparedStatement ps;
-        ps = database.prepareStatement("UPDATE VoteitUsers SET name = ?, password = ? WHERE userId = ?");
+        ps = database.prepareStatement("UPDATE VoteitUsers SET name = ?, password = ?, admin = ? WHERE userId = ?");
         ps.setString(1, name);
         ps.setString(2, password);
-        ps.setInt(3, userId);
+        ps.setBoolean(3, admin);
+        ps.setInt(4, userId);
         ps.executeUpdate();
     }
 
