@@ -243,11 +243,11 @@ public class VoteitDB {
 
     public static void addTopic(String title, String content, int userId, int pollId) throws SQLException {
         PreparedStatement ps;
-        ps = database.prepareStatement("INSERT INTO VoteiTopics(title, content, userId, pollId) VALUES (?,?,?,?)");
+        ps = database.prepareStatement("INSERT INTO VoteitTopics(title, content, userId, pollId) VALUES (?,?,?,?)");
         ps.setString(1, title);
-        ps.setString(3, content);
-        ps.setInt(4, userId);
-        ps.setInt(5, pollId);
+        ps.setString(2, content);
+        ps.setInt(3, userId);
+        ps.setInt(4, pollId);
         ps.executeUpdate();
     }
 
