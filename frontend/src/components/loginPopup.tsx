@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useStore } from "store/store";
+import { useUserStore } from "store/userStore";
 import style from "styles/components/loginPopup.module.scss";
 import Popup from "./popup";
 
@@ -9,8 +9,8 @@ interface LoginPopupProps {
 }
 
 export default function LoginPopup(props: LoginPopupProps) {
-  const login = useStore((store) => store.login);
-  const register = useStore((store) => store.register);
+  const login = useUserStore((store) => store.login);
+  const register = useUserStore((store) => store.register);
 
   const buttonText = props.register ? "Register" : "Login";
   const action = () => {

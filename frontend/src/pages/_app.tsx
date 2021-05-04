@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import { useStore } from "store/store";
+import { useUserStore } from "store/userStore";
 import "../styles/globals.scss";
 
 function MyApp({ Component, pageProps }) {
-  const login = useStore((state) => state.checkLogin);
-  useEffect(() => login(), []);
+  const checkLogin = useUserStore((state) => state.checkLogin);
+  useEffect(() => checkLogin(), []);
 
   return <Component {...pageProps} />;
 }

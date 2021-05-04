@@ -1,28 +1,23 @@
 import Header from "components/header";
+import Poll from "components/poll";
+import PollModel from "models/pollModel";
 import { useEffect, useState } from "react";
+import { usePollStore } from "store/pollStore";
 import style from "styles/pages/index.module.scss";
 
 export default function Index() {
-  const [polls, setPolls] = useState([]);
+  const pollStore = usePollStore();
   useEffect(() => {
-    fetch("http://localhost:3001/api/poll/get").then(async (res) => {
-      setPolls(JSON.parse(await res.text()));
-    });
+    pollStore.getPolls();
   }, []);
 
   return (
     <div>
       <Header />
       <div id={style.main}>
-        <h1 id={style.pageTitle}>Polls</h1>
-        {polls.map((el) => {
-          return (
-            <div>
-              <span>Ort: {el.place}</span>
-              <br />
-              <span>Meeting: {new Date(el.date).toString()}</span>
-            </div>
-          );
+        <h1 id={style.pageTitle}>Abstimmungen</h1>
+        {pollStore.polls.map((el, index) => {
+          return <Poll pollModel={el} index={index}></Poll>;
         })}
       </div>
     </div>

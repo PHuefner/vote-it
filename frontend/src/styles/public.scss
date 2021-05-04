@@ -35,20 +35,6 @@ $dist_l: 30px;
   }
 }
 
-@mixin searchWrapper {
-  padding-right: 0px;
-  border-radius: $radius_small;
-}
-
-@mixin searchContent {
-  padding-right: 0px;
-  border-radius: $radius_small 0 0 $radius_small;
-}
-
-@mixin searchButton {
-  border-radius: 0 $radius_small $radius_small 0;
-}
-
 @mixin popupForm($margins) {
   display: flex;
   flex-direction: column;
