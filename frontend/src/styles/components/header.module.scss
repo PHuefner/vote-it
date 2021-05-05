@@ -16,23 +16,6 @@
   @include button;
 }
 
-#search {
-  margin: $dist_xs;
-  border: 2px solid $bg_dark;
-  border-radius: $radius_small;
-  overflow: hidden;
-  display: flex;
-  button {
-    margin: 0;
-    border-radius: 0px;
-  }
-  input {
-    border-radius: 0;
-    border: 0;
-    padding-left: $dist_s;
-  }
-}
-
 .seperator {
   flex: 1;
 }

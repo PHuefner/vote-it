@@ -46,16 +46,20 @@ $dist_l: 30px;
   }
 
   input {
-    margin-bottom: $margins;
     border: 0;
     border-radius: $radius_small;
     padding: $dist_s;
     font-size: inherit;
   }
 
+  > * {
+    margin-bottom: $margins;
+  }
+
   button {
     flex: 1;
     font-size: inherit;
+    margin-bottom: 0;
   }
 
   .vspacer {

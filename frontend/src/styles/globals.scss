@@ -1,10 +1,10 @@
-@use "public";
+@use "public" as *;
 
 html,
 body {
   padding: 0;
   margin: 0;
   font-family: sans-serif;
-  background-color: public.$bg_dark;
+  background-color: $bg_dark;
   color: white;
 }
