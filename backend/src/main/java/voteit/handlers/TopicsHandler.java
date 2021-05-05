@@ -1,10 +1,8 @@
 package voteit.handlers;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import voteit.VoteitDB;
 import voteit.libs.json.JsonArray;
 import voteit.libs.json.JsonException;
 import voteit.libs.json.JsonObject;
@@ -19,7 +17,6 @@ import voteit.models.User;
 import voteit.modules.Constants;
 import voteit.modules.exceptions.LoginNotFoundException;
 import voteit.modules.exceptions.ResourceNotFoundException;
-import voteit.resources.DataStructureFactory;
 
 public class TopicsHandler {
   public static void addHandlers(ServerHttp server) {

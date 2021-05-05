@@ -96,7 +96,7 @@ public class UserHandler {
 
       try {
         int token = Integer.parseInt(context.cookies.get(Constants.LOGINTOKENCOOKIEKEY));
-        User user = new User(token);
+        new User(token);
         VoteitDB.deleteToken(token);
         res = new Response(200);
       } catch (NumberFormatException e) {
