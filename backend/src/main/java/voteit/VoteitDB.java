@@ -1,6 +1,7 @@
 package voteit;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -198,7 +199,7 @@ public class VoteitDB {
     }
 
     public static ResultSet getPolls() throws SQLException {
-        PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitPolls");
+        PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitPolls ORDER BY date DESC");
         return ps.executeQuery();
     }
 
