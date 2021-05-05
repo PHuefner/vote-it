@@ -2,10 +2,8 @@ import PollModel from "models/pollModel";
 import React, { useEffect, useState } from "react";
 import style from "styles/components/poll.module.scss";
 import TopicPopup from "components/topicPopup";
-import { usePollStore } from "store/pollStore";
 
 interface PollProps {
-  index: number;
   pollModel: PollModel;
 }
 
@@ -19,7 +17,6 @@ export default function Poll(props: PollProps) {
   let endDate = shortDate(poll.end);
   let eventDate = shortDate(poll.date);
 
-  let topics = ["topic 1", "topic 2", "topic 3"];
   return (
     <div id={style.poll}>
       <h2>Abstimmung für den {eventDate}</h2>
@@ -50,11 +47,7 @@ export default function Poll(props: PollProps) {
       </button>
 
       {topicPopup ? (
-        <TopicPopup
-          close={() => setTopicPopup(false)}
-          poll={poll}
-          index={props.index}
-        ></TopicPopup>
+        <TopicPopup close={() => setTopicPopup(false)} poll={poll}></TopicPopup>
       ) : null}
     </div>
   );

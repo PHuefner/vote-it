@@ -9,25 +9,23 @@ interface LoginPopupProps {
 }
 
 export default function LoginPopup(props: LoginPopupProps) {
-  const login = useUserStore((store) => store.login);
-  const register = useUserStore((store) => store.register);
-
-  const buttonText = props.register ? "Register" : "Login";
-  const action = () => {
-    try {
-      if (props.register) {
-        register(user, password);
-      } else {
-        login(user, password);
-      }
-      props.close();
-    } catch (error) {
-      throw new Error("fuckyou");
-    }
-  };
-
+  const { login, register } = useUserStore((store) => ({
+    login: store.login,
+    register: store.register,
+  }));
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
+
+  const action = () => {
+    if (props.register) {
+      register(user, password);
+    } else {
+      login(user, password);
+    }
+    props.close();
+  };
+
+  const buttonText = props.register ? "Register" : "Login";
   return (
     <Popup close={props.close}>
       <form

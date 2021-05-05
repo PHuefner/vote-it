@@ -4,12 +4,14 @@ import style from "styles/components/header.module.scss";
 import CreatePollPopup from "./createPollPopup";
 import LoginPopup from "./loginPopup";
 
-export default function Header(props) {
+export default function Header() {
   const [showLogin, setShowLogin] = useState(false);
   const [register, setRegister] = useState(false);
   const [showPost, setShowPost] = useState(false);
-  const username = useUserStore((store) => store.name);
-  const logout = useUserStore((store) => store.logout);
+  const { username, logout } = useUserStore((store) => ({
+    username: store.name,
+    logout: store.logout,
+  }));
 
   const userButtons = [
     <button onClick={() => setShowPost(true)} className={style.button}>
@@ -19,6 +21,7 @@ export default function Header(props) {
       Logout
     </button>,
   ];
+
   const guestButtons = [
     <button
       onClick={() => {

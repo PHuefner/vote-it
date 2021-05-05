@@ -1,39 +1,41 @@
+import de from "date-fns/locale/de";
+import PollModel from "models/pollModel";
 import React, { useState } from "react";
-import ReactDatePicker, {
-  registerLocale,
-  setDefaultLocale,
-} from "react-datepicker";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { usePollStore } from "store/pollStore";
 import style from "styles/components/createPollPopup.module.scss";
 import Popup from "./popup";
-
-import "react-datepicker/dist/react-datepicker.css";
-import de from "date-fns/locale/de";
-import { usePollStore } from "store/pollStore";
-import PollModel from "models/pollModel";
 
 interface LoginPopupProps {
   close: () => void;
 }
 
-export default function CreatePollPopup(props) {
+export default function CreatePollPopup(props: LoginPopupProps) {
+  const { submitPoll, getPolls } = usePollStore((store) => ({
+    submitPoll: store.submitPoll,
+    getPolls: store.getPolls,
+  }));
   const [place, setPlace] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState<Date>();
   const [eventDate, setEventDate] = useState<Date>();
-  const pollStore = usePollStore();
 
-  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    await pollStore.submitPoll(
-      new PollModel(place, startDate, endDate, eventDate)
-    );
-    pollStore.getPolls();
+  const action = async () => {
+    await submitPoll(new PollModel(place, startDate, endDate, eventDate));
+    getPolls();
     props.close();
   };
 
   return (
     <Popup close={props.close}>
-      <form id={style.post} action="#" onSubmit={submit}>
+      <form
+        id={style.post}
+        onSubmit={(e) => {
+          e.preventDefault();
+          action();
+        }}
+      >
         <h1>Create a poll</h1>
 
         <input

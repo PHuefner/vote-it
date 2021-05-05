@@ -7,12 +7,14 @@ import Popup from "./popup";
 interface TopicPopupProps {
   close: () => void;
   poll: PollModel;
-  index: number;
 }
 
 export default function TopicPopup(props: TopicPopupProps) {
-  const submitTopic = usePollStore((state) => state.submitTopic);
-  const getPolls = usePollStore((state) => state.getPolls);
+  const { submitTopic, getPolls } = usePollStore((store) => ({
+    submitTopic: store.submitTopic,
+    getPolls: store.getPolls,
+  }));
+
   const action = () => {
     submitTopic(props.poll, title, content);
     getPolls();

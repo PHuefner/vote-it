@@ -32,7 +32,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     }
   },
   logout: async () => {
-    let res = await fetch("http://localhost:3001/api/users/logout", {
+    let res = await fetch("http://localhost:3001/api/user/logout", {
       credentials: "include",
     });
     if (res.ok) {
