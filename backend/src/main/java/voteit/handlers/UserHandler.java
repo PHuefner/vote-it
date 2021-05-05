@@ -2,6 +2,7 @@ package voteit.handlers;
 
 import java.sql.SQLException;
 
+import voteit.VoteitDB;
 import voteit.libs.json.JsonException;
 import voteit.libs.json.JsonObject;
 import voteit.libs.json.JsonParser;
@@ -90,10 +91,29 @@ public class UserHandler {
       return res;
     };
 
+    Handler logout = (Context context) -> {
+      Response res = new Response(500);
+
+      try {
+        int token = Integer.parseInt(context.cookies.get(Constants.LOGINTOKENCOOKIEKEY));
+        User user = new User(token);
+        VoteitDB.deleteToken(token);
+        res = new Response(200);
+      } catch (NumberFormatException e) {
+        res = new Response("token syntax invalid").setStatus(400);
+      } catch (SQLException e) {
+        res = new Response(500);
+      } catch (LoginNotFoundException e) {
+        res = new Response(e.getMessage()).setStatus(401);
+      }
+      return res;
+    };
+
     server.addRoute("/api/user/login", login);
     // server.addRoute("/api/user/delete", delete);
     server.addRoute("/api/user/register", register);
     server.addRoute("/api/user/data", data);
+    server.addRoute("/api/user/logout", logout);
   }
 
 }

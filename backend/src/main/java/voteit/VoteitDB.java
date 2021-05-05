@@ -183,7 +183,11 @@ public class VoteitDB {
         return token;
     }
 
-    // TODO remove token
+    public static void deleteToken(int token) throws SQLException {
+        PreparedStatement ps = database.prepareStatement("DELETE FROM UserTokens WHERE token=?");
+        ps.setInt(1, token);
+        ps.executeUpdate();
+    }
 
     // Polls
 
