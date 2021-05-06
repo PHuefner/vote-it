@@ -233,15 +233,51 @@ public class VoteitDB {
 
     // Topics
 
-    public static ResultSet getTopic(int id) throws SQLException {
+    public static ResultSet getTopic(int topicId) throws SQLException {
         PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitTopics WHERE topicId=?");
-        ps.setInt(1, id);
+        ps.setInt(1, topicId);
         return ps.executeQuery();
     }
 
     public static ResultSet getTopics(int pollId) throws SQLException {
         PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitTopics WHERE pollId=?");
         ps.setInt(1, pollId);
+        return ps.executeQuery();
+    }
+
+    public static ResultSet getTopicsVoted(int pollId, int userId) throws SQLException {
+        PreparedStatement ps = database.prepareStatement("""
+                SELECT *,
+                        EXISTS(
+                          SELECT userid
+                          FROM voteitvote V
+                          WHERE ? = V.userid
+                          AND T.topicid = V.topicid)
+                        as voted
+                        FROM voteittopics T
+                        WHERE T.pollid=?
+
+                """);
+        ps.setInt(1, userId);
+        ps.setInt(2, pollId);
+        return ps.executeQuery();
+    }
+
+    public static ResultSet getTopicVoted(int topicId, int userId) throws SQLException {
+        PreparedStatement ps = database.prepareStatement("""
+                SELECT *,
+                        EXISTS(
+                          SELECT userid
+                          FROM voteitvote V
+                          WHERE ? = V.userid
+                          AND T.topicid = V.topicid)
+                        as voted
+                        FROM voteittopics T
+                        WHERE T.topicId=?
+
+                """);
+        ps.setInt(1, userId);
+        ps.setInt(2, topicId);
         return ps.executeQuery();
     }
 
@@ -281,17 +317,17 @@ public class VoteitDB {
         return ps.executeQuery();
     }
 
-    public static ResultSet getVoted(int userId, int pollId) throws SQLException {
-        PreparedStatement ps = database
-                .prepareStatement("SELECT COUNT(*) AS Anzahl FROM VoteitVote WHERE userId=? AND pollId=?");
-        ps.setInt(1, userId);
-        ps.setInt(2, pollId);
-        return ps.executeQuery();
-    }
-
-    public static void voteForTopic(int topic, int user) throws SQLException {
+    public static void setVote(int topic, int user) throws SQLException {
         PreparedStatement ps;
         ps = database.prepareStatement("INSERT INTO VoteitVote(topicId, userId) VALUES (?,?)");
+        ps.setInt(1, topic);
+        ps.setInt(2, user);
+        ps.executeUpdate();
+    }
+
+    public static void deleteVote(int topic, int user) throws SQLException {
+        PreparedStatement ps;
+        ps = database.prepareStatement("DELETE FROM VoteitVote WHERE topicId=? AND userId=?");
         ps.setInt(1, topic);
         ps.setInt(2, user);
         ps.executeUpdate();

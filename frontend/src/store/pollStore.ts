@@ -1,4 +1,5 @@
 import PollModel from "models/pollModel";
+import TopicModel from "models/topicModel";
 import create, { State } from "zustand";
 
 interface PollStore extends State {
@@ -10,6 +11,7 @@ interface PollStore extends State {
     title: string,
     content: string
   ) => Promise<void>;
+  setTopicVote: (topicId: number, voted: boolean) => Promise<void>;
 }
 
 export const usePollStore = create<PollStore>((set, get) => ({
@@ -43,11 +45,18 @@ export const usePollStore = create<PollStore>((set, get) => ({
       let topics = await (
         await fetch("http://localhost:3001/api/topic/get", {
           method: "POST",
+          credentials: "include",
           body: JSON.stringify({ pollId: poll.id }),
         })
       ).json();
+      let newTopics: TopicModel[] = [];
+      for (const topic of topics) {
+        newTopics.push(
+          new TopicModel(topic.topicId, topic.title, topic.content, topic.voted)
+        );
+      }
       let newPolls = get().polls;
-      newPolls[index].topics = topics;
+      newPolls[index].topics = newTopics;
       set({ polls: newPolls });
     });
   },
@@ -59,6 +68,16 @@ export const usePollStore = create<PollStore>((set, get) => ({
         pollId: poll.id,
         title: title,
         content: content,
+      }),
+    });
+  },
+  setTopicVote: async (topicId: number, voted: boolean) => {
+    await fetch("http://localhost:3001/api/topic/vote", {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify({
+        topicId: topicId,
+        voted: voted,
       }),
     });
   },

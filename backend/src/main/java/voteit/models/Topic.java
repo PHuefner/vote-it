@@ -36,7 +36,7 @@ public class Topic {
    * @param userId
    * @param pollId
    */
-  private Topic(int topicId, String title, String content, int userId, int pollId) {
+  protected Topic(int topicId, String title, String content, int userId, int pollId) {
     this.topicId = topicId;
     this.title = title;
     this.content = content;

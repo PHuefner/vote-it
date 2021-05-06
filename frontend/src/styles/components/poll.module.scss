@@ -36,9 +36,22 @@
     @include button;
     margin: 0;
     &:hover {
-      background-color: $bg;
+      background-color: $green_voted_transparent;
+    }
+    &:active {
+      background-color: $bg_dark;
     }
     margin-left: $dist_xs;
+  }
+
+  .voted {
+    background-color: $green_voted;
+    &:hover {
+      background-color: $red_unvote;
+    }
+    &:active {
+      background-color: $bg_dark;
+    }
   }
 }
 

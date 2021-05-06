@@ -2,6 +2,7 @@ import PollModel from "models/pollModel";
 import React, { useEffect, useState } from "react";
 import style from "styles/components/poll.module.scss";
 import TopicPopup from "components/topicPopup";
+import { usePollStore } from "store/pollStore";
 
 interface PollProps {
   pollModel: PollModel;
@@ -9,6 +10,10 @@ interface PollProps {
 
 export default function Poll(props: PollProps) {
   const [topicPopup, setTopicPopup] = useState(false);
+  const { setTopicVote, getPolls } = usePollStore((store) => ({
+    setTopicVote: store.setTopicVote,
+    getPolls: store.getPolls,
+  }));
 
   let poll = props.pollModel;
   let id = poll.id;
@@ -32,12 +37,21 @@ export default function Poll(props: PollProps) {
       <hr />
       <div>
         {poll.topics
-          ? props.pollModel.topics.map((el) => (
+          ? poll.topics.map((el) => (
               <div className={style.topic}>
                 <span>{el.title}</span>
                 <div className={style.seperator} />
                 <span>40%</span>
-                <button className={style.upvote}>↑</button>
+                <button
+                  className={style.upvote + " " + (el.voted ? style.voted : "")}
+                  onClick={() => {
+                    console.log(el);
+                    setTopicVote(el.id, !el.voted);
+                    getPolls();
+                  }}
+                >
+                  ↑
+                </button>
               </div>
             ))
           : null}
