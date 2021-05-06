@@ -234,13 +234,30 @@ public class VoteitDB {
     // Topics
 
     public static ResultSet getTopic(int topicId) throws SQLException {
-        PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitTopics WHERE topicId=?");
+        PreparedStatement ps = database.prepareStatement("""
+                SELECT *,
+                (SELECT
+                    COUNT(topicId)
+                    FROM voteitvote V
+                    WHERE T.topicId = V.topicId)
+                as votes
+                FROM VoteitTopics T
+                WHERE topicId=?""");
         ps.setInt(1, topicId);
         return ps.executeQuery();
     }
 
     public static ResultSet getTopics(int pollId) throws SQLException {
-        PreparedStatement ps = database.prepareStatement("SELECT * FROM VoteitTopics WHERE pollId=?");
+        PreparedStatement ps = database.prepareStatement("""
+                SELECT *,
+                (SELECT
+                    COUNT(topicId)
+                    FROM voteitvote V
+                    WHERE T.topicId = V.topicId)
+                as votes
+                FROM VoteitTopics T
+                WHERE pollId=?
+                """);
         ps.setInt(1, pollId);
         return ps.executeQuery();
     }
@@ -261,7 +278,6 @@ public class VoteitDB {
                 as votes
                 FROM voteittopics T
                 WHERE T.pollid=?
-
                 """);
         ps.setInt(1, userId);
         ps.setInt(2, pollId);
@@ -284,7 +300,6 @@ public class VoteitDB {
                         as votes
                         FROM voteittopics T
                         WHERE T.topicId=?
-
                 """);
         ps.setInt(1, userId);
         ps.setInt(2, topicId);
@@ -320,12 +335,6 @@ public class VoteitDB {
     }
 
     // Votes
-
-    public static ResultSet getVotesByTopic(int topicId) throws SQLException {
-        PreparedStatement ps = database.prepareStatement("SELECT COUNT(*) AS Anzahl FROM VoteitVote WHERE topicId=?");
-        ps.setInt(1, topicId);
-        return ps.executeQuery();
-    }
 
     public static void setVote(int topic, int user) throws SQLException {
         PreparedStatement ps;
