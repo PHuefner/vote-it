@@ -72,6 +72,7 @@ public class TopicsHandler {
           topicJson.put("topicId", topic.getTopicId());
           topicJson.put("title", topic.getTitle());
           topicJson.put("content", topic.getContent());
+          topicJson.put("votes", topic.getVotes());
           topicJson.put("userId", topic.getUserId());
           topicJson.put("pollId", topic.getPollId());
           if (topic instanceof TopicVoted) {

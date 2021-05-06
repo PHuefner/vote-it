@@ -41,7 +41,7 @@ export default function Poll(props: PollProps) {
               <div className={style.topic}>
                 <span>{el.title}</span>
                 <div className={style.seperator} />
-                <span>40%</span>
+                <span>{el.votes + " Stimmen"}</span>
                 <button
                   className={style.upvote + " " + (el.voted ? style.voted : "")}
                   onClick={() => {

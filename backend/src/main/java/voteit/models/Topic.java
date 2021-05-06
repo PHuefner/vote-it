@@ -11,6 +11,7 @@ public class Topic {
   int topicId;
   String title;
   String content;
+  int votes;
   int userId;
   int pollId;
 
@@ -36,10 +37,11 @@ public class Topic {
    * @param userId
    * @param pollId
    */
-  protected Topic(int topicId, String title, String content, int userId, int pollId) {
+  protected Topic(int topicId, String title, String content, int votes, int userId, int pollId) {
     this.topicId = topicId;
     this.title = title;
     this.content = content;
+    this.votes = votes;
     this.userId = userId;
     this.pollId = pollId;
   }
@@ -58,9 +60,10 @@ public class Topic {
       int topicId = topicSet.getInt("topicId");
       String title = topicSet.getString("title");
       String content = topicSet.getString("content");
+      int votes = topicSet.getInt("votes");
       int userId = topicSet.getInt("userId");
 
-      topics.add(new Topic(topicId, title, content, userId, pollId));
+      topics.add(new Topic(topicId, title, content, votes, userId, pollId));
     }
     return topics;
   }
@@ -75,6 +78,10 @@ public class Topic {
 
   public String getContent() {
     return content;
+  }
+
+  public int getVotes() {
+    return votes;
   }
 
   public int getUserId() {

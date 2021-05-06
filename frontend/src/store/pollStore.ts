@@ -52,7 +52,13 @@ export const usePollStore = create<PollStore>((set, get) => ({
       let newTopics: TopicModel[] = [];
       for (const topic of topics) {
         newTopics.push(
-          new TopicModel(topic.topicId, topic.title, topic.content, topic.voted)
+          new TopicModel(
+            topic.topicId,
+            topic.title,
+            topic.content,
+            topic.votes,
+            topic.voted
+          )
         );
       }
       let newPolls = get().polls;

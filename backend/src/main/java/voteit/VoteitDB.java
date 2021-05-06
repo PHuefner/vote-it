@@ -248,14 +248,19 @@ public class VoteitDB {
     public static ResultSet getTopicsVoted(int pollId, int userId) throws SQLException {
         PreparedStatement ps = database.prepareStatement("""
                 SELECT *,
-                        EXISTS(
-                          SELECT userid
-                          FROM voteitvote V
-                          WHERE ? = V.userid
-                          AND T.topicid = V.topicid)
-                        as voted
-                        FROM voteittopics T
-                        WHERE T.pollid=?
+                EXISTS(
+                    SELECT userid
+                    FROM voteitvote V
+                    WHERE ? = V.userid
+                    AND T.topicid = V.topicid)
+                as voted,
+                (SELECT
+                    COUNT(topicId)
+                    FROM voteitvote V
+                    WHERE T.topicId = V.topicId)
+                as votes
+                FROM voteittopics T
+                WHERE T.pollid=?
 
                 """);
         ps.setInt(1, userId);
@@ -271,7 +276,12 @@ public class VoteitDB {
                           FROM voteitvote V
                           WHERE ? = V.userid
                           AND T.topicid = V.topicid)
-                        as voted
+                        as voted,
+                        (SELECT
+                            COUNT(topicId)
+                            FROM voteitvote V
+                            WHERE T.topicId = V.topicId)
+                        as votes
                         FROM voteittopics T
                         WHERE T.topicId=?
 

@@ -11,8 +11,9 @@ public class TopicVoted extends Topic {
   int voterId;
   boolean voted;
 
-  protected TopicVoted(int topicId, String title, String content, int userId, int pollId, int voterId, boolean voted) {
-    super(topicId, title, content, userId, pollId);
+  protected TopicVoted(int topicId, String title, String content, int votes, int userId, int pollId, int voterId,
+      boolean voted) {
+    super(topicId, title, content, votes, userId, pollId);
     this.voterId = voterId;
     this.voted = voted;
   }
@@ -23,10 +24,11 @@ public class TopicVoted extends Topic {
       int topicId = topicSet.getInt("topicId");
       String title = topicSet.getString("title");
       String content = topicSet.getString("content");
+      int votes = topicSet.getInt("votes");
       int userId = topicSet.getInt("userId");
       int pollId = topicSet.getInt("pollId");
       boolean voted = topicSet.getBoolean("voted");
-      return new TopicVoted(topicId, title, content, userId, pollId, voterId, voted);
+      return new TopicVoted(topicId, title, content, votes, userId, pollId, voterId, voted);
     } else {
       throw new ResourceNotFoundException("topic");
     }
@@ -39,10 +41,11 @@ public class TopicVoted extends Topic {
       int topicId = topicSet.getInt("topicId");
       String title = topicSet.getString("title");
       String content = topicSet.getString("content");
+      int votes = topicSet.getInt("votes");
       int userId = topicSet.getInt("userId");
       boolean voted = topicSet.getBoolean("voted");
 
-      topics.add(new TopicVoted(topicId, title, content, userId, pollId, voterId, voted));
+      topics.add(new TopicVoted(topicId, title, content, votes, userId, pollId, voterId, voted));
     }
     return topics;
   }
