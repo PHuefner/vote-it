@@ -18,7 +18,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
       credentials: "include",
     });
     if (res.ok) {
-      get().checkLogin();
+      location.reload()
+      return;
     } else {
       throw new Error(await res.text())
     }
@@ -30,7 +31,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
       credentials: "include",
     });
     if (res.ok) {
-      get().checkLogin();
+      location.reload()
+      return;
     } else {
       let text = await res.text()
       if (text.trim() == "user already exists") {
