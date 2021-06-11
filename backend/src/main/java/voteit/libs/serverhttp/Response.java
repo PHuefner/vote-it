@@ -50,7 +50,8 @@ public class Response {
         StringBuilder out = new StringBuilder();
         out.append("HTTP/1.0 " + status + "\n");
         out.append("Content-Type: " + contentType + "; charset=UTF-8" + "\n");
-        out.append("Access-Control-Allow-Origin: *\n");
+        out.append("Access-Control-Allow-Origin: http://kucera-server.de\n");
+        out.append("Access-Control-Allow-Credentials: true\n");
         if (!headers.isEmpty()) {
             headers.forEach((k, v) -> {
                 out.append(String.format("Set-Cookie: %s=%s; HttpOnly; Path=/\n", k, v));

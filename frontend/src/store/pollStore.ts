@@ -1,5 +1,5 @@
-import PollModel from "models/pollModel";
-import TopicModel from "models/topicModel";
+import PollModel from "../models/pollModel";
+import TopicModel from "../models/topicModel";
 import create, { State } from "zustand";
 
 interface PollStore extends State {
@@ -12,43 +12,54 @@ interface PollStore extends State {
     content: string
   ) => Promise<void>;
   setTopicVote: (topicId: number, voted: boolean) => Promise<void>;
+  deleteTopic: (topic: TopicModel) => Promise<void>;
 }
 
 export const usePollStore = create<PollStore>((set, get) => ({
   polls: [],
   submitPoll: async (poll: PollModel) => {
-    await fetch("http://localhost:3001/api/poll/create", {
+    let req = await fetch("http://kucera-server.de/api/poll/create", {
       method: "POST",
       credentials: "include",
       body: JSON.stringify({
         place: poll.place,
-        pollBegin: poll.begin.valueOf(),
         pollEnd: poll.end.valueOf(),
         date: poll.date.valueOf(),
       }),
     });
-    get().getPolls();
+    if (req.ok) {
+      get().getPolls();
+    } else {
+      throw new Error(await req.text());
+    }
   },
   getPolls: async () => {
     //Fetch all polls
-    let res = await (await fetch("http://localhost:3001/api/poll/get")).json();
+    let req = await fetch("http://kucera-server.de/api/poll/get");
+    if (!req.ok) {
+      throw new Error(await req.text())
+    }
+    let json = await req.json()
     let polls = [];
-    res.map((el) => {
+    json.map((el) => {
       polls.push(
-        new PollModel(el.place, el.pollBegin, el.pollEnd, el.date, el.pollId)
+        new PollModel(el.place, el.pollEnd, el.date, el.pollId)
       );
     });
     //Set polls to display before loading topics
     set({ polls: polls });
     //Fetch and set topics seperate for each topic
     polls.map(async (poll, index) => {
-      let topics = await (
-        await fetch("http://localhost:3001/api/topic/get", {
+      let topicRes = 
+        await fetch("http://kucera-server.de/api/topic/get", {
           method: "POST",
           credentials: "include",
           body: JSON.stringify({ pollId: poll.id }),
         })
-      ).json();
+      if (!topicRes.ok) {
+        throw new Error(await topicRes.text())
+      }
+      let topics = await topicRes.json()
       let newTopics: TopicModel[] = [];
       for (const topic of topics) {
         newTopics.push(
@@ -57,7 +68,8 @@ export const usePollStore = create<PollStore>((set, get) => ({
             topic.title,
             topic.content,
             topic.votes,
-            topic.voted
+            topic.voted,
+            topic.userId,
           )
         );
       }
@@ -66,8 +78,22 @@ export const usePollStore = create<PollStore>((set, get) => ({
       set({ polls: newPolls });
     });
   },
+  deleteTopic: async (topic: TopicModel) => {
+    let req = await fetch("http://kucera-server.de/api/topic/delete", {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify({
+        topicId: topic.id
+      })
+    })
+    if (!req.ok) {
+      throw new Error(await req.text());
+    } else {
+      get().getPolls();
+    }
+  },
   submitTopic: async (poll: PollModel, title: string, content: string) => {
-    fetch("http://localhost:3001/api/topic/submit", {
+    let req = await fetch("http://kucera-server.de/api/topic/submit", {
       method: "POST",
       credentials: "include",
       body: JSON.stringify({
@@ -76,9 +102,13 @@ export const usePollStore = create<PollStore>((set, get) => ({
         content: content,
       }),
     });
+    if (!req.ok) {
+      throw new Error(await req.text())
+    }
+    get().getPolls();
   },
   setTopicVote: async (topicId: number, voted: boolean) => {
-    await fetch("http://localhost:3001/api/topic/vote", {
+    let res = await fetch("http://kucera-server.de/api/topic/vote", {
       method: "POST",
       credentials: "include",
       body: JSON.stringify({
@@ -86,5 +116,9 @@ export const usePollStore = create<PollStore>((set, get) => ({
         voted: voted,
       }),
     });
+    if (!res.ok) {
+      throw new Error(await res.text())
+    }
+    get().getPolls();
   },
 }));

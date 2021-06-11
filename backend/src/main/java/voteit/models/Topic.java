@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import voteit.VoteitDB;
+import voteit.modules.exceptions.ResourceNotFoundException;
 
 public class Topic {
 
@@ -66,6 +67,24 @@ public class Topic {
       topics.add(new Topic(topicId, title, content, votes, userId, pollId));
     }
     return topics;
+  }
+
+  public static Topic getTopic(int topicId) throws SQLException, ResourceNotFoundException {
+    ResultSet topicSet = VoteitDB.getTopic(topicId);
+    if (!topicSet.next()) {
+      throw new ResourceNotFoundException("topic");
+    }
+    int foundTopicId = topicSet.getInt("topicId");
+    String title = topicSet.getString("title");
+    String content = topicSet.getString("content");
+    int votes = topicSet.getInt("votes");
+    int userId = topicSet.getInt("userId");
+    int pollId = topicSet.getInt("pollId");
+    return new Topic(foundTopicId, title, content, votes, userId, pollId);
+  }
+
+  public void delete() throws SQLException {
+    VoteitDB.deleteTopic(topicId);
   }
 
   public int getTopicId() {

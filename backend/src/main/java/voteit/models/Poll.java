@@ -10,7 +10,6 @@ import voteit.modules.exceptions.ResourceNotFoundException;
 public class Poll {
   private int pollId;
   private String place;
-  private long pollBegin;
   private long pollEnd;
   private long date;
 
@@ -18,13 +17,12 @@ public class Poll {
    * Create new poll
    * 
    * @param place
-   * @param pollBegin
    * @param pollEnd
    * @param date
    * @throws SQLException
    */
-  public static void add(String place, long pollBegin, long pollEnd, long date) throws SQLException {
-    VoteitDB.addPoll(place, pollBegin, pollEnd, date);
+  public static void add(String place, long pollEnd, long date) throws SQLException {
+    VoteitDB.addPoll(place, pollEnd, date);
   }
 
   /**
@@ -32,14 +30,12 @@ public class Poll {
    * 
    * @param pollId
    * @param place
-   * @param pollBegin
    * @param pollEnd
    * @param date
    */
-  private Poll(int pollId, String place, long pollBegin, long pollEnd, long date) {
+  private Poll(int pollId, String place, long pollEnd, long date) {
     this.pollId = pollId;
     this.place = place;
-    this.pollBegin = pollBegin;
     this.pollEnd = pollEnd;
     this.date = date;
   }
@@ -56,7 +52,6 @@ public class Poll {
     if (pollSet.next()) {
       this.pollId = pollSet.getInt("pollId");
       this.place = pollSet.getString("place");
-      this.pollBegin = pollSet.getTimestamp("pollBegin").getTime();
       this.pollEnd = pollSet.getTimestamp("pollEnd").getTime();
       this.date = pollSet.getTimestamp("date").getTime();
     } else {
@@ -77,9 +72,8 @@ public class Poll {
 
     // Transform poll ResultSet to Objects
     while (pollSet.next()) {
-      polls.add(
-          new Poll(pollSet.getInt("pollId"), pollSet.getString("place"), pollSet.getTimestamp("pollBegin").getTime(),
-              pollSet.getTimestamp("pollEnd").getTime(), pollSet.getTimestamp("date").getTime()));
+      polls.add(new Poll(pollSet.getInt("pollId"), pollSet.getString("place"),
+          pollSet.getTimestamp("pollEnd").getTime(), pollSet.getTimestamp("date").getTime()));
     }
     return polls;
   }
@@ -92,10 +86,6 @@ public class Poll {
     return place;
   }
 
-  public long getPollBegin() {
-    return pollBegin;
-  }
-
   public long getPollEnd() {
     return pollEnd;
   }
@@ -104,10 +94,9 @@ public class Poll {
     return date;
   }
 
-  public void update(String place, long pollBegin, long pollEnd, long date) throws SQLException {
-    VoteitDB.updatePoll(place, pollBegin, pollEnd, date, pollId);
+  public void update(String place, long pollEnd, long date) throws SQLException {
+    VoteitDB.updatePoll(place, pollEnd, date, pollId);
     this.place = place;
-    this.pollBegin = pollBegin;
     this.pollEnd = pollEnd;
     this.date = date;
   }

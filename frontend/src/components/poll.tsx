@@ -1,69 +1,112 @@
-import PollModel from "models/pollModel";
+import {
+  Box,
+  Button,
+  Container,
+  Divider,
+  Grid,
+  Paper,
+  styled,
+  Typography,
+  useTheme,
+} from "@material-ui/core";
+import { Add } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
-import style from "styles/components/poll.module.scss";
-import TopicPopup from "components/topicPopup";
-import { usePollStore } from "store/pollStore";
+import PollModel from "../models/pollModel";
+import { usePollStore } from "../store/pollStore";
+import { useUserStore } from "../store/userStore";
+import SubmitTopicDialog from "./dialogs/submitTopicDialog";
+import Topic from "./topic";
 
 interface PollProps {
-  pollModel: PollModel;
+  pollData: PollModel;
 }
 
 export default function Poll(props: PollProps) {
-  const [topicPopup, setTopicPopup] = useState(false);
-  const { setTopicVote, getPolls } = usePollStore((store) => ({
-    setTopicVote: store.setTopicVote,
-    getPolls: store.getPolls,
-  }));
+  const [submitOpen, setSubmitOpen] = useState(false);
 
-  let poll = props.pollModel;
-  let id = poll.id;
-  let begun = poll.begin.valueOf() > new Date().valueOf() ? false : true;
-  let beginDate = shortDate(poll.begin);
-  let endDate = shortDate(poll.end);
-  let eventDate = shortDate(poll.date);
+  const theme = useTheme();
+  const Wrapper = styled(Paper)({
+    padding: theme.spacing(1),
+  });
+  const TopicWrapper = styled(Box)({
+    margin: `${theme.spacing(2)}px ${theme.spacing(5)}px`,
+  });
+  const ButtonArea = styled(Box)({
+    display: "flex",
+    margin: theme.spacing(2),
+  });
+  const InfoArea = styled(Box)({
+    display: "flex",
+  });
+  const Spacer = styled(Box)({
+    flexGrow: 1,
+  });
+
+  const userStore = useUserStore();
+  const pollStore = usePollStore();
+  const pollData = props.pollData;
+
+  const topics = pollData.topics;
+  const eventDate = shortDate(pollData.date);
+  const pollEnd = shortDate(pollData.end);
+  const ended = pollData.end < new Date();
 
   return (
-    <div id={style.poll}>
-      <h2>Abstimmung für den {eventDate}</h2>
-      <div id={style.header}>
-        <span>Ort: {poll.place}</span>
-        <div className={style.seperator}></div>
-        <span>
-          {begun
-            ? "Abstimmung endet am " + endDate
-            : "Abstimmung beginnt am " + beginDate}
-        </span>
-      </div>
-      <hr />
-      <div>
-        {poll.topics
-          ? poll.topics.map((el) => (
-              <div className={style.topic}>
-                <span>{el.title}</span>
-                <div className={style.seperator} />
-                <span>{el.votes + " Stimmen"}</span>
-                <button
-                  className={style.upvote + " " + (el.voted ? style.voted : "")}
-                  onClick={() => {
-                    console.log(el);
-                    setTopicVote(el.id, !el.voted);
-                    getPolls();
-                  }}
-                >
-                  ↑
-                </button>
-              </div>
-            ))
-          : null}
-      </div>
-      <button className={style.button} onClick={() => setTopicPopup(true)}>
-        Fragestellung hinzufügen
-      </button>
+    <Wrapper>
+      <Typography variant="h4">Abstimmung</Typography>
+      <InfoArea>
+        <Typography>
+          Findet statt in: {pollData.place} <br />
+          am: {eventDate}
+        </Typography>
+        <Spacer />
+        <Typography>
+          {ended ? (
+            <React.Fragment>
+              <Typography>
+                Abstimmung ist beendet <br />
+                Endete am {pollEnd}
+              </Typography>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>Abstimmung endet am: {pollEnd}</React.Fragment>
+          )}
+        </Typography>
+      </InfoArea>
+      <Divider></Divider>
+      <TopicWrapper>
+        <Grid container spacing={2} direction="column">
+          {topics
+            ? props.pollData.topics.map((el) => (
+                <Grid item>
+                  <Topic topicModel={el} ended={ended} />
+                </Grid>
+              ))
+            : null}
+        </Grid>
+      </TopicWrapper>
+      <ButtonArea>
+        <Spacer />
+        {userStore.user && !ended ? (
+          <Button
+            onClick={() => setSubmitOpen(true)}
+            startIcon={<Add />}
+            variant="contained"
+            color="primary"
+          >
+            Thema hinzufügen
+          </Button>
+        ) : null}
+      </ButtonArea>
 
-      {topicPopup ? (
-        <TopicPopup close={() => setTopicPopup(false)} poll={poll}></TopicPopup>
-      ) : null}
-    </div>
+      <SubmitTopicDialog
+        open={submitOpen}
+        onClose={() => setSubmitOpen(false)}
+        submit={async (title: string, content: string) => {
+          await pollStore.submitTopic(props.pollData, title, content);
+        }}
+      />
+    </Wrapper>
   );
 }
 
@@ -71,7 +114,7 @@ function shortDate(date: Date): string {
   return (
     date.getDate() +
     "." +
-    date.getMonth() +
+    (date.getMonth() + 1).toString().padStart(2, "0") +
     " " +
     date.getHours() +
     ":" +

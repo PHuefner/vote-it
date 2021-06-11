@@ -116,9 +116,27 @@ public class TopicsHandler {
       return res;
     };
 
+    Handler delete = (Context context) -> {
+      Response res = new Response(500);
+      try {
+        JsonObject body = JsonParser.parseObject(context.requestData);
+        Topic topic = Topic.getTopic(body.getInteger("topicId"));
+        topic.delete();
+        res = new Response(200);
+      } catch (JsonException e) {
+        res = new Response(e.getMessage()).setStatus(400);
+      } catch (SQLException e) {
+        res = new Response(500);
+      } catch (ResourceNotFoundException e) {
+        res = new Response(e.getMessage()).setStatus(404);
+      }
+      return res;
+    };
+
     server.addRoute("/api/topic/get", get);
     server.addRoute("/api/topic/submit", submit);
     server.addRoute("/api/topic/vote", vote);
+    server.addRoute("/api/topic/delete", delete);
   }
 
 }

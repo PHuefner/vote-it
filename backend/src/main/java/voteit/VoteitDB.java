@@ -54,7 +54,6 @@ public class VoteitDB {
                     (
                         pollId SERIAL NOT NULL PRIMARY KEY,
                         place TEXT,
-                        pollBegin TIMESTAMP,
                         date TIMESTAMP,
                         pollEnd TIMESTAMP
                     );
@@ -68,8 +67,8 @@ public class VoteitDB {
                         content TEXT,
                         userId INT,
                         pollId INT,
-                        FOREIGN KEY (userId) REFERENCES VoteitUsers(userId) ON UPDATE SET NULL,
-                        FOREIGN KEY (pollId) REFERENCES VoteitPolls(pollId) ON UPDATE SET NULL
+                        FOREIGN KEY (userId) REFERENCES VoteitUsers(userId) ON DELETE CASCADE,
+                        FOREIGN KEY (pollId) REFERENCES VoteitPolls(pollId) ON DELETE CASCADE
                     );
                     """);
 
@@ -77,8 +76,8 @@ public class VoteitDB {
                     CREATE TABLE VoteitVote
                     (
                         userId INT, topicId INT,
-                        FOREIGN KEY (userId) REFERENCES VoteitUsers(userId) ON UPDATE SET NULL,
-                        FOREIGN KEY (topicId) REFERENCES VoteitTopics(topicId) ON UPDATE SET NULL
+                        FOREIGN KEY (userId) REFERENCES VoteitUsers(userId) ON DELETE CASCADE,
+                        FOREIGN KEY (topicId) REFERENCES VoteitTopics(topicId) ON DELETE CASCADE
                     );
                     """);
 
@@ -90,7 +89,12 @@ public class VoteitDB {
                         FOREIGN KEY (userId) REFERENCES VoteitUsers(userId) ON DELETE CASCADE
                     );
                     """);
-
+            PreparedStatement ps;
+            ps = database.prepareStatement("INSERT INTO VoteitUsers(name, password,admin) VALUES (?,?,?)");
+            ps.setString(1, "admin");
+            ps.setString(2, "rush");
+            ps.setBoolean(3, true);
+            ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Couldn't create tables.");
             System.out.println(e.getMessage());
@@ -202,13 +206,12 @@ public class VoteitDB {
         return ps.executeQuery();
     }
 
-    public static void addPoll(String place, long pollBegin, long pollEnd, long date) throws SQLException {
+    public static void addPoll(String place, long pollEnd, long date) throws SQLException {
         PreparedStatement ps;
-        ps = database.prepareStatement("INSERT INTO VoteitPolls(place, pollBegin, date, pollEnd) VALUES (?,?,?,?)");
+        ps = database.prepareStatement("INSERT INTO VoteitPolls(place, date, pollEnd) VALUES (?,?,?)");
         ps.setString(1, place);
-        ps.setTimestamp(2, new Timestamp(pollBegin));
-        ps.setTimestamp(3, new Timestamp(date));
-        ps.setTimestamp(4, new Timestamp(pollEnd));
+        ps.setTimestamp(2, new Timestamp(date));
+        ps.setTimestamp(3, new Timestamp(pollEnd));
         ps.executeUpdate();
     }
 
@@ -218,16 +221,13 @@ public class VoteitDB {
         ps.executeUpdate();
     }
 
-    public static void updatePoll(String place, long pollBegin, long pollEnd, long date, int pollId)
-            throws SQLException {
+    public static void updatePoll(String place, long pollEnd, long date, int pollId) throws SQLException {
         PreparedStatement ps;
-        ps = database.prepareStatement(
-                "UPDATE VoteitPolls SET place = ?, pollBegin = ?, date = ?, pollEnd = ? WHERE pollId = ?");
+        ps = database.prepareStatement("UPDATE VoteitPolls SET place = ?, date = ?, pollEnd = ? WHERE pollId = ?");
         ps.setString(1, place);
-        ps.setTimestamp(2, new Timestamp(pollBegin));
-        ps.setTimestamp(3, new Timestamp(date));
-        ps.setTimestamp(4, new Timestamp(pollEnd));
-        ps.setInt(5, pollId);
+        ps.setTimestamp(2, new Timestamp(date));
+        ps.setTimestamp(3, new Timestamp(pollEnd));
+        ps.setInt(4, pollId);
         ps.executeUpdate();
     }
 
@@ -257,6 +257,7 @@ public class VoteitDB {
                 as votes
                 FROM VoteitTopics T
                 WHERE pollId=?
+                ORDER BY votes DESC
                 """);
         ps.setInt(1, pollId);
         return ps.executeQuery();
@@ -278,6 +279,7 @@ public class VoteitDB {
                 as votes
                 FROM voteittopics T
                 WHERE T.pollid=?
+                ORDER BY votes DESC
                 """);
         ps.setInt(1, userId);
         ps.setInt(2, pollId);

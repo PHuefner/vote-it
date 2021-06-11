@@ -3,6 +3,7 @@ package voteit.handlers;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import voteit.VoteitDB;
 import voteit.libs.json.JsonArray;
 import voteit.libs.json.JsonException;
 import voteit.libs.json.JsonObject;
@@ -29,7 +30,6 @@ public class PollHandler {
           JsonObject pollJson = new JsonObject();
           pollJson.put("pollId", poll.getPollId());
           pollJson.put("place", poll.getPlace());
-          pollJson.put("pollBegin", poll.getPollBegin());
           pollJson.put("pollEnd", poll.getPollEnd());
           pollJson.put("date", poll.getDate());
           pollsJson.add(pollJson);
@@ -63,11 +63,10 @@ public class PollHandler {
         } else {
           JsonObject req = JsonParser.parseObject(context.requestData);
           String place = req.getString("place");
-          long pollBegin = req.getLong("pollBegin");
           long pollEnd = req.getLong("pollEnd");
           long date = req.getLong("date");
 
-          Poll.add(place, pollBegin, pollEnd, date);
+          Poll.add(place, pollEnd, date);
           res = new Response(200);
         }
 

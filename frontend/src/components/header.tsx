@@ -1,62 +1,106 @@
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Button,
+  Card,
+  styled,
+  Toolbar,
+  Typography,
+  useTheme,
+} from "@material-ui/core";
 import React, { useState } from "react";
-import { useUserStore } from "store/userStore";
-import style from "styles/components/header.module.scss";
-import CreatePollPopup from "./createPollPopup";
-import LoginPopup from "./loginPopup";
+import { useUserStore } from "../store/userStore";
+import AuthDialog from "./dialogs/authDialog";
+import CreatePollDialog from "./dialogs/createPollDialog";
 
 export default function Header() {
-  const [showLogin, setShowLogin] = useState(false);
-  const [register, setRegister] = useState(false);
-  const [showPost, setShowPost] = useState(false);
-  const { username, logout } = useUserStore((store) => ({
-    username: store.name,
-    logout: store.logout,
-  }));
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [registerOpen, setRegisterOpen] = useState(false);
+  const [pollOpen, setPollOpen] = useState(false);
 
-  const userButtons = [
-    <button onClick={() => setShowPost(true)} className={style.button}>
-      Post
-    </button>,
-    <button onClick={() => logout()} className={style.button}>
-      Logout
-    </button>,
-  ];
+  const theme = useTheme();
+  const Spacer = styled(Box)({
+    flexGrow: 1,
+  });
+  const ButtonBar = styled(Box)({
+    display: "flex",
+    "& > *": { margin: theme.spacing(1) },
+  });
+  const AvatarContainer = styled(Box)({
+    display: "flex",
+    flexDirection: "column",
+  });
 
-  const guestButtons = [
-    <button
-      onClick={() => {
-        setRegister(true);
-        setShowLogin(true);
-      }}
-      className={style.button}
-    >
-      Register
-    </button>,
-    <button
-      onClick={() => {
-        setRegister(false);
-        setShowLogin(true);
-      }}
-      className={style.button}
-    >
-      Login
-    </button>,
-  ];
+  const userStore = useUserStore();
+
+  const unauthHeader = (
+    <React.Fragment>
+      <Button color="inherit" onClick={() => setRegisterOpen(true)}>
+        Registrieren
+      </Button>
+      <Button color="inherit" onClick={() => setLoginOpen(true)}>
+        Einloggen
+      </Button>
+    </React.Fragment>
+  );
+
+  const userHeader = (
+    <React.Fragment>
+      <Button color="inherit" onClick={() => userStore.logout()}>
+        Ausloggen
+      </Button>
+      <AvatarContainer>
+        <Typography>{userStore.user ? userStore.user.name : null}</Typography>
+        <Avatar style={{ margin: "auto" }} src="/avatar.jpg">
+          {userStore.user ? userStore.user.name.charAt(0) : null}
+        </Avatar>
+      </AvatarContainer>
+    </React.Fragment>
+  );
+
+  const adminHeader = (
+    <React.Fragment>
+      <Button color="inherit" onClick={() => setPollOpen(true)}>
+        Neue Abstimmung
+      </Button>
+      {userHeader}
+    </React.Fragment>
+  );
+
+  let bar;
+  if (userStore.user) {
+    if (userStore.user.admin) {
+      bar = adminHeader;
+    } else {
+      bar = userHeader;
+    }
+  } else {
+    bar = unauthHeader;
+  }
 
   return (
-    <div id={style.header}>
-      <h1 id={style.title}>{username}</h1>
+    <AppBar position="static">
+      <Toolbar>
+        <Typography variant="h3">vote.it</Typography>
+        <Spacer></Spacer>
+        <ButtonBar>{bar}</ButtonBar>
+      </Toolbar>
 
-      <div className={style.seperator}></div>
-
-      {username ? userButtons : guestButtons}
-
-      {/* Popups */}
-      {showLogin ? (
-        <LoginPopup close={() => setShowLogin(false)} register={register} />
-      ) : null}
-
-      {showPost ? <CreatePollPopup close={() => setShowPost(false)} /> : null}
-    </div>
+      <CreatePollDialog
+        open={pollOpen}
+        onClose={() => setPollOpen(false)}
+      ></CreatePollDialog>
+      <AuthDialog
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        register={false}
+      />
+      <AuthDialog
+        open={registerOpen}
+        onClose={() => setRegisterOpen(false)}
+        register={true}
+      />
+    </AppBar>
   );
 }

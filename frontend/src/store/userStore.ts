@@ -1,54 +1,66 @@
-import { userInfo } from "node:os";
 import create, { State } from "zustand";
+import UserModel from "../models/userModel";
 
 interface UserStore extends State {
-  name: string;
-  login: (user: string, password: string) => void;
-  register: (user: string, password: string) => void;
-  checkLogin: () => void;
-  logout: () => void;
+  user: UserModel;
+  login: (user: string, password: string) => Promise<void>;
+  register: (user: string, password: string) => Promise<void>;
+  checkLogin: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
-  name: "",
+  user: null,
   login: async (user, password) => {
-    let res = await fetch("http://localhost:3001/api/user/login", {
+    let res = await fetch("http://kucera-server.de/api/user/login", {
       method: "POST",
       body: JSON.stringify({ name: user, password: password }),
       credentials: "include",
     });
     if (res.ok) {
       get().checkLogin();
+    } else {
+      throw new Error(await res.text())
     }
   },
   register: async (user, password) => {
-    let res = await fetch("http://localhost:3001/api/user/register", {
+    let res = await fetch("http://kucera-server.de/api/user/register", {
       method: "POST",
       body: JSON.stringify({ name: user, password: password }),
       credentials: "include",
     });
     if (res.ok) {
       get().checkLogin();
+    } else {
+      let text = await res.text()
+      if (text.trim() == "user already exists") {
+        text = "Name schon in Verwendung"
+        console.log("boi")
+      }
+      throw new Error(text)
     }
   },
   logout: async () => {
-    let res = await fetch("http://localhost:3001/api/user/logout", {
+    let res = await fetch("http://kucera-server.de/api/user/logout", {
       credentials: "include",
     });
     if (res.ok) {
-      get().checkLogin();
+      location.reload()
+      return;
+    } else {
+      throw new Error(await res.text())
     }
   },
   checkLogin: async () => {
     try {
-      let res = await fetch("http://localhost:3001/api/user/data", {
+      let res = await fetch("http://kucera-server.de/api/user/data", {
         credentials: "include",
       });
       if (res.ok) {
         let user = await res.json();
-        set({ name: user.name });
+        set({ user: new UserModel(user.userId,user.name,user.admin) });
       } else {
-        set({ name: "" });
+        set({ user: null });
       }
     } catch (error) {}
   },

@@ -1,28 +1,79 @@
-import Header from "components/header";
-import Poll from "components/poll";
-import PollModel from "models/pollModel";
-import { useEffect, useState } from "react";
-import { usePollStore } from "store/pollStore";
-import style from "styles/pages/index.module.scss";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  IconButton,
+  Snackbar,
+  SnackbarContent,
+  styled,
+  Typography,
+} from "@material-ui/core";
+import { Close } from "@material-ui/icons";
+import React, { useEffect, useState } from "react";
+import Header from "../components/header";
+import Poll from "../components/poll";
+import PollModel from "../models/pollModel";
+import TopicModel from "../models/topicModel";
+import { usePollStore } from "../store/pollStore";
+import { useUserStore } from "../store/userStore";
 
-export default function Index() {
-  const { polls, getPolls } = usePollStore((store) => ({
-    polls: store.polls,
-    getPolls: store.getPolls,
-  }));
+export default function Home() {
+  const MainContainer = styled(Container)({
+    maxWidth: "70%",
+    margin: "auto",
+  });
+
+  const userStore = useUserStore();
   useEffect(() => {
-    getPolls();
+    userStore.checkLogin();
+    return;
   }, []);
 
+  const pollStore = usePollStore();
+  useEffect(() => {
+    (async () => {
+      try {
+        await pollStore.getPolls();
+      } catch (error) {
+        setSnackMessage(error.message);
+        setSnackState(true);
+      }
+    })();
+    return;
+  }, []);
+  const pollData = pollStore.polls;
+
+  const [snackState, setSnackState] = useState(false);
+  const [snackMessage, setSnackMessage] = useState("");
+
   return (
-    <div>
-      <Header />
-      <div id={style.main}>
-        <h1 id={style.pageTitle}>Abstimmungen</h1>
-        {polls.map((el) => {
-          return <Poll pollModel={el}></Poll>;
-        })}
-      </div>
-    </div>
+    <Box>
+      <Header></Header>
+      <MainContainer>
+        <Typography variant="h3">Abstimmungen</Typography>
+        <Grid container spacing={2} direction="column">
+          {pollData.map((el) => (
+            <Grid item>
+              <Poll pollData={el}></Poll>
+            </Grid>
+          ))}
+        </Grid>
+      </MainContainer>
+      <Snackbar
+        open={snackState}
+        autoHideDuration={5000}
+        onClose={() => setSnackState(false)}
+      >
+        <SnackbarContent
+          message={snackMessage}
+          action={
+            <IconButton onClick={() => setSnackState(false)} color="inherit">
+              <Close />
+            </IconButton>
+          }
+        ></SnackbarContent>
+      </Snackbar>
+    </Box>
   );
 }

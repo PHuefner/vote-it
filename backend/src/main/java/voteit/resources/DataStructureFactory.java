@@ -37,7 +37,6 @@ public class DataStructureFactory {
         JsonObject poll = new JsonObject();
         poll.put("pollId", rs.getInt("pollId"));
         poll.put("place", rs.getString("place"));
-        poll.put("pollBegin", rs.getTimestamp("pollBegin").getTime());
         poll.put("date", rs.getTimestamp("date").getTime());
         poll.put("pollEnd", rs.getTimestamp("pollEnd").getTime());
         return poll;
