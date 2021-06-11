@@ -12,7 +12,7 @@ interface UserStore extends State {
 export const useUserStore = create<UserStore>((set, get) => ({
   user: null,
   login: async (user, password) => {
-    let res = await fetch("http://kucera-server.de/api/user/login", {
+    let res = await fetch("https://kucera-server.de/api/user/login", {
       method: "POST",
       body: JSON.stringify({ name: user, password: password }),
       credentials: "include",
@@ -24,7 +24,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     }
   },
   register: async (user, password) => {
-    let res = await fetch("http://kucera-server.de/api/user/register", {
+    let res = await fetch("https://kucera-server.de/api/user/register", {
       method: "POST",
       body: JSON.stringify({ name: user, password: password }),
       credentials: "include",
@@ -41,7 +41,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     }
   },
   logout: async () => {
-    let res = await fetch("http://kucera-server.de/api/user/logout", {
+    let res = await fetch("https://kucera-server.de/api/user/logout", {
       credentials: "include",
     });
     if (res.ok) {
@@ -53,7 +53,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
   },
   checkLogin: async () => {
     try {
-      let res = await fetch("http://kucera-server.de/api/user/data", {
+      let res = await fetch("https://kucera-server.de/api/user/data", {
         credentials: "include",
       });
       if (res.ok) {

@@ -20,7 +20,7 @@ import voteit.libs.json.WrongTypeException;
 public class VoteitDB {
 
     static Connection database;
-    static String host = "localhost:5432";
+    static String host = "db:5432";
     static String db = "voteit";
     static String url = "jdbc:postgresql://" + host + "/" + db;
     static String user = "voteit";
@@ -103,14 +103,8 @@ public class VoteitDB {
         }
     }
 
-    public static void createConnection() {
-        try {
-            database = DriverManager.getConnection(url, user, password);
-        } catch (SQLException e) {
-            System.out.println("Error while connecting to db.");
-            System.out.println(e.getMessage());
-            System.exit(20);
-        }
+    public static void createConnection() throws SQLException {
+        database = DriverManager.getConnection(url, user, password);
     }
 
     public static void closeConnection() {

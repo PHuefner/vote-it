@@ -1,6 +1,7 @@
 package voteit;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import voteit.handlers.PollHandler;
 import voteit.handlers.TopicsHandler;
@@ -20,7 +21,7 @@ public class Main {
 
     // docker run -p 5432:5432 -e POSTGRES_PASSWORD=pw -e POSTGRES_USER=voteit
     // postgres
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         ServerHttp server = null;
         // TODO set negative Response status
 
@@ -28,11 +29,22 @@ public class Main {
             return Constants.genericNotFound();
         };
 
-        VoteitDB.createConnection();
+        boolean error = false;
+        do {
+            try {
+                VoteitDB.createConnection();
+                error = false;
+            } catch (SQLException e1) {
+                System.out.println("Error connectin to database. retrying in 10 seconds");
+                error = true;
+                Thread.sleep(10000);
+            }
+        } while (error);
+
         VoteitDB.initTables();
 
         try {
-            server = new ServerHttp(3001);
+            server = new ServerHttp(80);
         } catch (IOException e) {
             System.out.println("Couldn't create HttpServer.");
             System.out.println(e.getMessage());

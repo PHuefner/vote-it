@@ -18,7 +18,7 @@ interface PollStore extends State {
 export const usePollStore = create<PollStore>((set, get) => ({
   polls: [],
   submitPoll: async (poll: PollModel) => {
-    let req = await fetch("http://kucera-server.de/api/poll/create", {
+    let req = await fetch("https://kucera-server.de/api/poll/create", {
       method: "POST",
       credentials: "include",
       body: JSON.stringify({
@@ -35,7 +35,7 @@ export const usePollStore = create<PollStore>((set, get) => ({
   },
   getPolls: async () => {
     //Fetch all polls
-    let req = await fetch("http://kucera-server.de/api/poll/get");
+    let req = await fetch("https://kucera-server.de/api/poll/get");
     if (!req.ok) {
       throw new Error(await req.text())
     }
@@ -51,7 +51,7 @@ export const usePollStore = create<PollStore>((set, get) => ({
     //Fetch and set topics seperate for each topic
     polls.map(async (poll, index) => {
       let topicRes = 
-        await fetch("http://kucera-server.de/api/topic/get", {
+        await fetch("https://kucera-server.de/api/topic/get", {
           method: "POST",
           credentials: "include",
           body: JSON.stringify({ pollId: poll.id }),
@@ -79,7 +79,7 @@ export const usePollStore = create<PollStore>((set, get) => ({
     });
   },
   deleteTopic: async (topic: TopicModel) => {
-    let req = await fetch("http://kucera-server.de/api/topic/delete", {
+    let req = await fetch("https://kucera-server.de/api/topic/delete", {
       method: "POST",
       credentials: "include",
       body: JSON.stringify({
@@ -93,7 +93,7 @@ export const usePollStore = create<PollStore>((set, get) => ({
     }
   },
   submitTopic: async (poll: PollModel, title: string, content: string) => {
-    let req = await fetch("http://kucera-server.de/api/topic/submit", {
+    let req = await fetch("https://kucera-server.de/api/topic/submit", {
       method: "POST",
       credentials: "include",
       body: JSON.stringify({
@@ -108,7 +108,7 @@ export const usePollStore = create<PollStore>((set, get) => ({
     get().getPolls();
   },
   setTopicVote: async (topicId: number, voted: boolean) => {
-    let res = await fetch("http://kucera-server.de/api/topic/vote", {
+    let res = await fetch("https://kucera-server.de/api/topic/vote", {
       method: "POST",
       credentials: "include",
       body: JSON.stringify({
