@@ -7,6 +7,7 @@ import {
   styled,
   Toolbar,
   Typography,
+  useMediaQuery,
   useTheme,
 } from "@material-ui/core";
 import React, { useState } from "react";
@@ -19,12 +20,15 @@ export default function Header() {
   const [registerOpen, setRegisterOpen] = useState(false);
   const [pollOpen, setPollOpen] = useState(false);
 
+  const phone = useMediaQuery("(min-width:900px)");
+
   const theme = useTheme();
   const Spacer = styled(Box)({
     flexGrow: 1,
   });
   const ButtonBar = styled(Box)({
     display: "flex",
+    flexDirection: phone ? "row" : "column",
     "& > *": { margin: theme.spacing(1) },
   });
   const AvatarContainer = styled(Box)({
@@ -51,7 +55,9 @@ export default function Header() {
         Ausloggen
       </Button>
       <AvatarContainer>
-        <Typography>{userStore.user ? userStore.user.name : null}</Typography>
+        <Typography style={{ margin: "auto" }}>
+          {userStore.user ? userStore.user.name : null}
+        </Typography>
         <Avatar style={{ margin: "auto" }} src="/avatar.jpg">
           {userStore.user ? userStore.user.name.charAt(0) : null}
         </Avatar>

@@ -8,6 +8,7 @@ import {
   SnackbarContent,
   styled,
   Typography,
+  useMediaQuery,
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
@@ -19,8 +20,10 @@ import { usePollStore } from "../store/pollStore";
 import { useUserStore } from "../store/userStore";
 
 export default function Home() {
+  const phone = useMediaQuery("(min-width:900px)");
+  console.log(phone);
   const MainContainer = styled(Container)({
-    maxWidth: "70%",
+    maxWidth: phone ? "70%" : "100%",
     margin: "auto",
   });
 

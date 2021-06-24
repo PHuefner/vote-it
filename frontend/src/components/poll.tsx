@@ -7,6 +7,7 @@ import {
   Paper,
   styled,
   Typography,
+  useMediaQuery,
   useTheme,
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
@@ -24,12 +25,16 @@ interface PollProps {
 export default function Poll(props: PollProps) {
   const [submitOpen, setSubmitOpen] = useState(false);
 
+  const phone = useMediaQuery("(min-width:900px)");
+
   const theme = useTheme();
   const Wrapper = styled(Paper)({
     padding: theme.spacing(1),
   });
   const TopicWrapper = styled(Box)({
-    margin: `${theme.spacing(2)}px ${theme.spacing(5)}px`,
+    margin: phone
+      ? `${theme.spacing(2)}px ${theme.spacing(5)}px`
+      : `${theme.spacing(2)}px ${theme.spacing(0)}px`,
   });
   const ButtonArea = styled(Box)({
     display: "flex",
